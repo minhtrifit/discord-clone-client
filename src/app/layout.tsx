@@ -4,6 +4,9 @@ import "./globals.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,6 +28,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <ToastContainer position="bottom-left" theme="colored" />
           {children}
         </ThemeProvider>
       </body>

@@ -2,6 +2,22 @@
 
 import { auth, signIn, signOut } from "@/lib/auth";
 
+export const handleRegister = async (prevState: any, form: FormData) => {
+  try {
+    const { email, name, password, agree } = Object.fromEntries(form);
+
+    if (agree === undefined) return { error: "Please agree terms & policy" };
+
+    console.log(email, name, password);
+
+    return { message: "Register account successfully" };
+  } catch (err: any) {
+    console.log(err);
+
+    throw err;
+  }
+};
+
 export const handleEmailLogin = async (prevState: any, form: FormData) => {
   try {
     const { email, password } = Object.fromEntries(form);
