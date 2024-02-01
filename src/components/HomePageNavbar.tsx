@@ -5,7 +5,9 @@ import Image from "next/image";
 const HomePageNavbar = () => {
   return (
     <div className="bg-primary-purple text-white flex flex-wrap gap-5 justify-around items-center py-4">
-      <Image src="/images/nav-icon.svg" width={120} height={120} alt="icon" />
+      <Link href={"/"}>
+        <Image src="/images/nav-icon.svg" width={120} height={120} alt="icon" />
+      </Link>
       <div className="flex flex-wrap justify-center gap-3 md:gap-8 font-semibold">
         {HomeNavLinks.map((link) => {
           return (
