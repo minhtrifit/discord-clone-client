@@ -1,5 +1,5 @@
+import Subslidebar from "@/components/Subslidebar";
 import type { Metadata } from "next";
-import Slidebar from "@/components/Slidebar";
 
 export const metadata: Metadata = {
   title: "Discord Clone | Dashboard",
@@ -12,8 +12,8 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="dark:bg-secondary-gray flex h-screen max-h-screen">
-      <Slidebar />
+    <div className="flex">
+      <Subslidebar />
       {children}
     </div>
   );

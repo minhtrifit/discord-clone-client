@@ -1,3 +1,4 @@
+import { ServerType } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -168,5 +169,26 @@ export const HomeFooterLinks = [
         url: "/company-information",
       },
     ],
+  },
+];
+
+export const ServerData: ServerType[] = [
+  {
+    id: 1,
+    name: "Những con mèo hoang",
+    owner: 4416,
+    avatar: "/images/avatar.png",
+  },
+  {
+    id: 2,
+    name: "HCMUS Public",
+    owner: 1599,
+    avatar: "https://github.com/shadcn.png",
+  },
+  {
+    id: 3,
+    name: "Coder Group",
+    owner: 2538,
+    avatar: "https://github.com/shadcn.png",
   },
 ];

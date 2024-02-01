@@ -32,7 +32,9 @@ export const authConfig = {
 
       // Auth user
       if (user && isOnLoginPage) {
-        return Response.redirect(new URL("/dashboard", request.nextUrl));
+        return Response.redirect(
+          new URL("/dashboard/friends", request.nextUrl)
+        );
       }
 
       // Unauth user
