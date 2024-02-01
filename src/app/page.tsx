@@ -1,7 +1,9 @@
-import HomePageNavbar from "@/components/HomePageNavbar";
 import Link from "next/link";
-import { Download } from "lucide-react";
 import Image from "next/image";
+import { Download } from "lucide-react";
+
+import HomePageNavbar from "@/components/HomePageNavbar";
+import HomePageFooter from "@/components/HomePageFooter";
 
 export default function Home() {
   return (
@@ -21,16 +23,16 @@ export default function Home() {
           <div className="flex flex-wrap gap-8 items-center">
             <Link href={"/download"}>
               <div
-                className="bg-white flex justify-center items-center gap-3 p-4 rounded-3xl
+                className="bg-white flex justify-center items-center gap-3 px-6 py-3 rounded-3xl
                               hover:text-primary-purple hover:shadow-2xl"
               >
                 <Download />
                 <p className="font-medium text-[18px]">Download for Windows</p>
               </div>
             </Link>
-            <Link href={"/download"}>
+            <Link href={"/login"}>
               <div
-                className="bg-primary-black text-white flex justify-center items-center gap-3 p-4 rounded-3xl
+                className="bg-primary-black text-white flex justify-center items-center gap-3 px-6 py-3 rounded-3xl
                               hover:bg-secondary-gray hover:shadow-2xl"
               >
                 <p className="font-medium text-[18px]">
@@ -43,15 +45,15 @@ export default function Home() {
         <Image
           className="z-10 absolute bottom-0 left-[-100px] md:left-0"
           src="/images/homepage-hero-1.svg"
-          width={600}
-          height={600}
+          width={500}
+          height={500}
           alt="hero1"
         />
         <Image
           className="z-10 hidden xl:block absolute bottom-0 right-0"
           src="/images/homepage-hero-2.svg"
-          width={600}
-          height={600}
+          width={500}
+          height={500}
           alt="hero2"
         />
       </div>
@@ -126,7 +128,28 @@ export default function Home() {
           height={1000}
           alt="hero6"
         />
+        <div className="relative flex flex-col items-center gap-8">
+          <h1 className="absolute text-xl md:text-[35px] font-black">
+            Ready to start your journey?
+          </h1>
+          <Image
+            src="/images/homepage-hero-7.svg"
+            width={1000}
+            height={1000}
+            alt="hero7"
+          />
+          <Link href={"/download"}>
+            <div
+              className="bg-primary-purple text-white flex justify-center items-center gap-3 px-6 py-3 rounded-3xl
+                              hover:bg-secondary-purple hover:shadow-2xl"
+            >
+              <Download />
+              <p className="font-medium text-[18px]">Download for Windows</p>
+            </div>
+          </Link>
+        </div>
       </div>
+      <HomePageFooter />
     </div>
   );
 }

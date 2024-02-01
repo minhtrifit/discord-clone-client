@@ -20,6 +20,7 @@ const config = {
     extend: {
       colors: {
         "primary-purple": "#404eed",
+        "secondary-purple": "#7289da",
         "primary-gray": "#313338",
         "secondary-gray": "#2b2d31",
         "hidden-gray": "#f6f6f6",
