@@ -32,12 +32,19 @@ export const authConfig = {
         request.nextUrl?.href === process.env.NEXTAUTH_URL + "/";
       const isOnDashboardPage = request.nextUrl?.href.includes("/dashboard");
       const isOnLoginPage = request.nextUrl?.href.includes("/login");
+      const isOnRegisterPage = request.nextUrl?.href.includes("/register");
 
       // Public page
       if (isOnHomepage) return true;
 
       // Auth user
       if (user && isOnLoginPage) {
+        return Response.redirect(
+          new URL("/dashboard/friends", request.nextUrl)
+        );
+      }
+
+      if (user && isOnRegisterPage) {
         return Response.redirect(
           new URL("/dashboard/friends", request.nextUrl)
         );

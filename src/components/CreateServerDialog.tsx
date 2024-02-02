@@ -109,7 +109,7 @@ const CreateServerDialog = (props: PropType) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div
-                  className="w-[50px] h-[50px] rounded-full bg-primary-purple flex justify-center items-center
+                  className="w-[50px] h-[50px] rounded-full bg-primary-purple text-white flex justify-center items-center
                             hover:cursor-pointer hover:bg-secondary-purple"
                 >
                   <IoAdd size={35} />
