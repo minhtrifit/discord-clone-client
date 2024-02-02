@@ -7,6 +7,7 @@ export const authConfig = {
     async jwt({ token, user }: any) {
       if (user) {
         token.isAdmin = false; // custom user data
+        token.avatar = user.avatar;
       }
 
       return token;
@@ -14,6 +15,7 @@ export const authConfig = {
     async session({ session, token }: any) {
       if (token) {
         session.user.isAdmin = token.isAdmin;
+        session.user.avatar = token.avatar;
       }
 
       return session;

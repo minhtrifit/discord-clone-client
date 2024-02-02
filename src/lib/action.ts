@@ -1,14 +1,34 @@
 "use server";
 
 import { auth, signIn, signOut } from "@/lib/auth";
+import { createNewUser, getUserByEmail } from "./action.api";
+import { UserType } from "@/types";
 
 export const handleRegister = async (prevState: any, form: FormData) => {
   try {
-    const { email, name, password, agree } = Object.fromEntries(form);
+    const { email, name, password, agree }: any = Object.fromEntries(form);
 
     if (agree === undefined) return { error: "Please agree terms & policy" };
 
-    console.log(email, name, password);
+    const res = await getUserByEmail(email);
+    const { user } = res;
+
+    if (user !== null) return { error: "Email is already exist" };
+
+    const newUser: UserType = {
+      name: name,
+      email: email,
+      password: password,
+      avatar: null,
+      provider: "email",
+    };
+
+    const res2 = await createNewUser(newUser);
+    const { message } = res2;
+
+    if (message !== "Create user successfully") {
+      return { error: message };
+    }
 
     return { message: "Register account successfully" };
   } catch (err: any) {
@@ -23,8 +43,6 @@ export const handleEmailLogin = async (prevState: any, form: FormData) => {
     const { email, password } = Object.fromEntries(form);
     await signIn("credentials", { email, password });
   } catch (err: any) {
-    console.log(err);
-
     if (err.message.includes("CredentialsSignin")) {
       return { error: "Invalid username or password" };
     }

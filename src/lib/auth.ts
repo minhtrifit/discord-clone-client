@@ -3,7 +3,7 @@ import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
 import { UserType } from "@/types";
-import { createNewUser } from "./action.api";
+import { createNewUser, loginByEmail } from "./action.api";
 
 // https://stackoverflow.com/questions/70897330/return-error-information-from-api-when-using-next-auth
 
@@ -11,14 +11,19 @@ const checkCredentials = async (credentials: any) => {
   try {
     const { email, password } = credentials;
 
-    if (email !== "minhtri.fit@gmail.com" || password !== "123") {
-      throw new Error("Wrong credentials");
+    const userData: UserType = {
+      email: email,
+      password: password,
+    };
+
+    const res = await loginByEmail(userData);
+    const { message, user } = res;
+
+    if (message !== "Login successfully") {
+      throw new Error(message);
     }
 
-    return {
-      name: "Lê Minh Trí",
-      email: "minhtri.fit@gmail.com",
-    };
+    return user;
   } catch (error) {
     throw new Error("Login failed");
   }

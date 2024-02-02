@@ -9,7 +9,7 @@ export interface UserType {
   name?: string;
   email?: string;
   password?: string | null;
-  avatar?: string;
+  avatar?: string | null;
   provider?: string;
   created?: Date;
 }
