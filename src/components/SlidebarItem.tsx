@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Tooltip,
@@ -25,6 +25,19 @@ const SlidebarItem = (props: PropType) => {
   const { id } = params;
 
   const [isOver, setIsOver] = useState<boolean>(false);
+  const [serverAvatar, setServerAvatar] = useState<string>(
+    "/images/discord-white-icon.svg"
+  );
+
+  useEffect(() => {
+    if (
+      server.id !== null &&
+      server.avatar !== null &&
+      server.avatar !== undefined
+    ) {
+      setServerAvatar(server.avatar);
+    }
+  }, [server]);
 
   const handleNavigateServer = () => {
     if (server.id === null) router.push("/dashboard/friends");
@@ -64,23 +77,33 @@ const SlidebarItem = (props: PropType) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <div
-              className={`absolute w-[50px] h-[50px] left-0 right-0 mx-auto bg-primary-purple flex justify-center rounded-full
-                    hover:cursor-pointer ${server.id === null && "p-2"}`}
+              className={`absolute w-[50px] h-[50px] left-0 right-0 mx-auto flex justify-center rounded-full
+                    hover:cursor-pointer ${server.id === null && "p-2"} ${
+                server.id === null && "bg-primary-purple"
+              }`}
               onClick={() => {
                 handleNavigateServer();
               }}
             >
-              <Image
-                className="rounded-full h-[100%] w-[100%]"
-                src={`${
-                  server.id === null
-                    ? "/images/discord-white-icon.svg"
-                    : server.avatar
-                }`}
-                width={35}
-                height={25}
-                alt="icon"
-              />
+              {server.id === null ? (
+                <Image
+                  className="rounded-full h-[100%] w-[100%] p-[8px]"
+                  src={serverAvatar}
+                  fill
+                  priority
+                  sizes="80%"
+                  alt="avatar"
+                />
+              ) : (
+                <Image
+                  className="rounded-full h-[100%] w-[100%]"
+                  src={serverAvatar}
+                  fill
+                  priority
+                  sizes="100%"
+                  alt="avatar"
+                />
+              )}
             </div>
           </TooltipTrigger>
           <TooltipContent side="right">

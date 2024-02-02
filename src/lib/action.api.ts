@@ -1,7 +1,8 @@
 "use server";
 
-import { UserType } from "@/types";
+import { ServerType, UserType } from "@/types";
 import axios from "axios";
+import { revalidatePath } from "next/cache";
 
 export const getConnectServer = async () => {
   try {
@@ -52,6 +53,38 @@ export const loginByEmail = async (user: UserType) => {
         email: user.email,
         password: user.password,
       }
+    );
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err.response.data);
+    return err.response.data;
+  }
+};
+
+export const createNewServer = async (server: ServerType, pathName: string) => {
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/server/create`,
+      {
+        name: server.name,
+        owner: server.owner,
+        avatar: server.avatar,
+      }
+    );
+
+    revalidatePath(pathName);
+
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err.response.data);
+    return err.response.data;
+  }
+};
+
+export const getJoinServerByUserId = async (userId: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/server/join/server/${userId}`
     );
     return res.data;
   } catch (err: any) {

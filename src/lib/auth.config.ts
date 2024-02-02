@@ -1,3 +1,5 @@
+import { getUserByEmail } from "./action.api";
+
 export const authConfig = {
   pages: {
     signIn: "/login",
@@ -6,22 +8,24 @@ export const authConfig = {
   callbacks: {
     async jwt({ token, user }: any) {
       if (user) {
-        token.isAdmin = false; // custom user data
-        token.avatar = user.avatar;
+        const profile = await getUserByEmail(user.email);
+
+        token.avatar = profile.user.avatar;
+        token.id = profile.user.id;
       }
 
       return token;
     },
     async session({ session, token }: any) {
       if (token) {
-        session.user.isAdmin = token.isAdmin;
         session.user.avatar = token.avatar;
+        session.user.id = token.id;
       }
 
       return session;
     },
     authorized({ auth, request }: any) {
-      console.log("Authorized:", auth);
+      // console.log("Authorized:", auth);
 
       const user = auth?.user;
       const isOnHomepage =
