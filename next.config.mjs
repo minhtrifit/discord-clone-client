@@ -8,7 +8,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "piwwbijgpwvzynpsplfn.supabase.co",
+        hostname: process.env.NEXT_PUBLIC_SUPABASE_HOST,
       },
     ],
   },
