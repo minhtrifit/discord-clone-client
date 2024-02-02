@@ -1,4 +1,4 @@
-const FriendPage = () => {
+const FriendPage = async () => {
   return <div>FriendPage</div>;
 };
 

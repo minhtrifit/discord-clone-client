@@ -4,3 +4,12 @@ export interface ServerType {
   owner?: number; // userId
   avatar?: string;
 }
+
+export interface UserType {
+  name?: string;
+  email?: string;
+  password?: string | null;
+  avatar?: string;
+  provider?: string;
+  created?: Date;
+}

@@ -2,6 +2,8 @@ import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
+import { UserType } from "@/types";
+import { createNewUser } from "./action.api";
 
 // https://stackoverflow.com/questions/70897330/return-error-information-from-api-when-using-next-auth
 
@@ -46,6 +48,24 @@ export const {
     }),
   ],
   callbacks: {
+    async signIn({ account, profile }: any) {
+      // console.log("AUTH CALLBACKS", profile);
+
+      if (account.provider === "github") {
+        // Save new user to database
+        const newUser: UserType = {
+          name: profile.name,
+          email: profile.email,
+          password: null,
+          avatar: profile.avatar_url,
+          provider: "github",
+        };
+
+        const res = await createNewUser(newUser);
+        console.log("Create user:", res);
+      }
+      return true;
+    },
     ...authConfig.callbacks,
   },
   secret: process.env.NEXTAUTH_SECRET,
