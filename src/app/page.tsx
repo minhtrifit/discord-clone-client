@@ -23,7 +23,7 @@ export default function Home() {
           <div className="flex flex-wrap gap-8 items-center">
             <Link href={"/download"}>
               <div
-                className="bg-white flex justify-center items-center gap-3 px-6 py-3 rounded-3xl
+                className="text-primary-black bg-white flex justify-center items-center gap-3 px-6 py-3 rounded-3xl
                               hover:text-primary-purple hover:shadow-2xl"
               >
                 <Download />
