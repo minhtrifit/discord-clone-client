@@ -14,8 +14,11 @@ export const authConfig = {
       if (user) {
         const profile = await getUserByEmail(user.email);
 
+        token.name = profile.user.name;
         token.avatar = profile.user.avatar;
+        token.password = profile.user.password;
         token.id = profile.user.id;
+        token.provider = profile.user.provider;
         token.mute = false;
         token.deafen = false;
       }
@@ -24,8 +27,11 @@ export const authConfig = {
     },
     async session({ session, token }: any) {
       if (token) {
+        session.user.name = token.name;
         session.user.avatar = token.avatar;
+        session.user.password = token.password;
         session.user.id = token.id;
+        session.user.provider = token.provider;
         session.user.mute = token.mute;
         session.user.deafen = token.deafen;
       }

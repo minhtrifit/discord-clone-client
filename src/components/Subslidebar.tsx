@@ -45,11 +45,11 @@ const Subslidebar = () => {
             <Link key={item.name} href={item.url}>
               <div
                 className={`px-2 py-3 rounded-md text-[14px] flex items-center gap-5
-                            text-gray-500 hover:bg-primary-white hover:text-primary-black
+                            text-gray-600 hover:bg-primary-white hover:text-primary-black
                             dark:text-gray-400 dark:hover:bg-secondary-gray dark:hover:text-white ${
                               category !== undefined &&
                               category?.includes(item.name.toLowerCase()) &&
-                              "bg-primary-white text-primary-black dark:bg-secondary-gray dark:text-white"
+                              "bg-primary-white text-primary-gray dark:bg-secondary-gray dark:text-white"
                             }`}
               >
                 {item.icon}

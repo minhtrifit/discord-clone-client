@@ -13,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import UserSettingDialog from "./UserSettingDialog";
 
 const UserProfile = () => {
   const { data: session, update }: any = useSession();
@@ -42,7 +43,7 @@ const UserProfile = () => {
       {session?.user === null ? (
         <p className="text-secondary-gray">user undefined</p>
       ) : (
-        <div className="flex items-center gap-3 p-[5px] text-[12px]">
+        <div className="flex items-center gap-[5px] p-[5px] text-[12px]">
           <div
             className="p-2 rounded-md flex items-center gap-3
                         hover:bg-secondary-white
@@ -53,7 +54,9 @@ const UserProfile = () => {
               <AvatarFallback>user</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <p className="truncate font-bold">{session?.user?.name}</p>
+              <p className="w-[70px] truncate font-bold">
+                {session?.user?.name}
+              </p>
               <p className="font-semibold text-[11px] text-green-500">Online</p>
             </div>
           </div>
@@ -104,13 +107,24 @@ const UserProfile = () => {
               </Tooltip>
             </TooltipProvider>
 
-            <button
-              className="dark:hover:text-white p-[6px] rounded-md
+            <UserSettingDialog>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      className="dark:hover:text-white p-[6px] rounded-md
                         hover:bg-secondary-white hover:text-primary-gray
                         dark:hover:bg-secondary-gray"
-            >
-              <IoMdSettings size={20} />
-            </button>
+                    >
+                      <IoMdSettings size={20} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>user settings</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </UserSettingDialog>
           </div>
         </div>
       )}

@@ -92,3 +92,20 @@ export const getJoinServerByUserId = async (userId: string) => {
     return err.response.data;
   }
 };
+
+export const editUserByUserId = async (user: UserType) => {
+  try {
+    const res = await axios.put(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/update/${user.id}`,
+      {
+        id: user.id,
+        ...user,
+      }
+    );
+
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err.response.data);
+    return err.response.data;
+  }
+};
