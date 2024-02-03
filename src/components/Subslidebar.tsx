@@ -7,6 +7,8 @@ import { BsSpeedometer } from "react-icons/bs";
 import { CiShop } from "react-icons/ci";
 import { usePathname } from "next/navigation";
 
+import UserProfile from "./UserProfile";
+
 const Subslidebar = () => {
   const category = usePathname().split("/dashboard/")[1];
 
@@ -29,7 +31,7 @@ const Subslidebar = () => {
   ];
 
   return (
-    <div className="relative bg-secondary-white dark:bg-primary-gray dark:text-gray-400">
+    <div className="relative w-[240px] overflow-x-auto bg-secondary-white dark:bg-primary-gray dark:text-gray-400">
       <div className="p-3 flex border border-b-primary-black">
         <input
           className="h-[30px] dark:bg-primary-black pl-4 pr-8 py-2 text-[12px] rounded-md outline-none"
@@ -57,9 +59,7 @@ const Subslidebar = () => {
           );
         })}
       </div>
-      <div className="absolute bottom-0 w-[100%] p-2 bg-primary-white dark:bg-primary-black">
-        User
-      </div>
+      <UserProfile />
     </div>
   );
 };

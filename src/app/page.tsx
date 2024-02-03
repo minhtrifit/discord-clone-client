@@ -65,10 +65,10 @@ export default function Home() {
           alt="hero3"
         />
         <div className="max-w-[400px] flex flex-col gap-5">
-          <h1 className="text-xl md:text-4xl font-bold">
+          <h1 className="text-black dark:text-black text-xl md:text-4xl font-bold">
             Create an invite-only place where you belong
           </h1>
-          <p className="text-justify md:text-left">
+          <p className="text-black dark:text-black text-justify md:text-left">
             Discord servers are organized into topic-based channels where you
             can collaborate, share, and just talk about your day without
             clogging up a group chat.
@@ -77,10 +77,10 @@ export default function Home() {
       </div>
       <div className="bg-hidden-gray flex flex-wrap justify-center md:gap-[150px] py-[100px]">
         <div className="max-w-[400px] flex flex-col gap-5">
-          <h1 className="text-xl md:text-4xl font-bold">
+          <h1 className="text-black dark:text-black text-xl md:text-4xl font-bold">
             Where hanging out is easy
           </h1>
-          <p className="text-justify md:text-left">
+          <p className="text-black dark:text-black text-justify md:text-left">
             Grab a seat in a voice channel when you’re free. Friends in your
             server can see you’re around and instantly pop in to talk without
             having to call.
@@ -101,10 +101,10 @@ export default function Home() {
           alt="hero5"
         />
         <div className="max-w-[400px] flex flex-col gap-5">
-          <h1 className="text-xl md:text-4xl font-bold">
+          <h1 className="text-black dark:text-black text-xl md:text-4xl font-bold">
             From few to a fandom
           </h1>
-          <p className="text-justify md:text-left">
+          <p className="text-black dark:text-black text-justify md:text-left">
             Get any community running with moderation tools and custom member
             access. Give members special powers, set up private channels, and
             more.
@@ -113,10 +113,10 @@ export default function Home() {
       </div>
       <div className="bg-hidden-gray flex flex-col items-center py-[100px] px-4 md:px-0">
         <div className="flex flex-col items-center gap-5">
-          <h1 className="text-[40px] text-center font-black">
+          <h1 className="text-black dark:text-black text-[40px] text-center font-black">
             RELIABLE TECH FOR STAYING CLOSE
           </h1>
-          <p className="md:text-xl text-center md:max-w-[1000px]">
+          <p className="text-black dark:text-black md:text-xl text-center md:max-w-[1000px]">
             Low-latency voice and video feels like you’re in the same room. Wave
             hello over video, watch friends stream their games, or gather up and
             have a drawing session with screen share.

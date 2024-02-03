@@ -13,7 +13,7 @@ const LoginPage = () => {
         <div className="p-4 flex flex-col items-center gap-5">
           <Image
             className="rounded-md"
-            // style={{ width: "100%", height: "auto" }}
+            style={{ width: "80%", height: "auto" }}
             priority
             src="/images/qr-code.png"
             width={180}

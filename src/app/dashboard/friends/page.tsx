@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { auth } from "@/lib/auth";
 
 const FriendPage = async () => {
@@ -5,7 +6,11 @@ const FriendPage = async () => {
 
   // console.log("SESSION", session);
 
-  return <div>FriendPage</div>;
+  return (
+    <div>
+      <ThemeToggle />
+    </div>
+  );
 };
 
 export default FriendPage;

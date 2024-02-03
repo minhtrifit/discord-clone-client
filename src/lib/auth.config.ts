@@ -6,12 +6,18 @@ export const authConfig = {
   },
   providers: [],
   callbacks: {
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, trigger, session }: any) {
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
+
       if (user) {
         const profile = await getUserByEmail(user.email);
 
         token.avatar = profile.user.avatar;
         token.id = profile.user.id;
+        token.mute = false;
+        token.deafen = false;
       }
 
       return token;
@@ -20,6 +26,8 @@ export const authConfig = {
       if (token) {
         session.user.avatar = token.avatar;
         session.user.id = token.id;
+        session.user.mute = token.mute;
+        session.user.deafen = token.deafen;
       }
 
       return session;
