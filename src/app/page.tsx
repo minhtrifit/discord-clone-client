@@ -57,7 +57,7 @@ export default function Home() {
           alt="hero2"
         />
       </div>
-      <div className="flex flex-wrap justify-center md:gap-[150px] py-[100px]">
+      <div className="dark:bg-white flex flex-wrap justify-center md:gap-[150px] py-[100px]">
         <Image
           src="/images/homepage-hero-3.svg"
           width={500}
@@ -93,7 +93,7 @@ export default function Home() {
           alt="hero3"
         />
       </div>
-      <div className="flex flex-wrap justify-center md:gap-[150px] py-[100px]">
+      <div className="dark:bg-white flex flex-wrap justify-center md:gap-[150px] py-[100px]">
         <Image
           src="/images/homepage-hero-5.svg"
           width={500}
