@@ -29,8 +29,10 @@
     "react-icons": "^5.0.1",
     "react-tabs": "^6.0.2",
     "react-toastify": "^10.0.4",
+    "socket.io-client": "^4.7.4",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -1,4 +1,5 @@
 import Subslidebar from "@/components/Subslidebar";
+import SocketProvider from "@/components/SocketProvider";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,9 +13,11 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex">
-      <Subslidebar />
-      {children}
-    </div>
+    <SocketProvider>
+      <div className="flex">
+        <Subslidebar />
+        {children}
+      </div>
+    </SocketProvider>
   );
 }

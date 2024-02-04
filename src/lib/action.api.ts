@@ -9,8 +9,8 @@ export const getConnectServer = async () => {
     const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}`);
     return res.data;
   } catch (err: any) {
-    console.log("API CALL ERROR:", err.response.data);
-    return err.response.data;
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
   }
 };
 
@@ -21,8 +21,8 @@ export const getUserByEmail = async (email: string) => {
     );
     return res.data;
   } catch (err: any) {
-    console.log("API CALL ERROR:", err.response.data);
-    return err.response.data;
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
   }
 };
 
@@ -40,8 +40,8 @@ export const createNewUser = async (user: UserType) => {
     );
     return res.data;
   } catch (err: any) {
-    console.log("API CALL ERROR:", err.response.data);
-    return err.response.data;
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
   }
 };
 
@@ -56,8 +56,8 @@ export const loginByEmail = async (user: UserType) => {
     );
     return res.data;
   } catch (err: any) {
-    console.log("API CALL ERROR:", err.response.data);
-    return err.response.data;
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
   }
 };
 
@@ -76,8 +76,8 @@ export const createNewServer = async (server: ServerType, pathName: string) => {
 
     return res.data;
   } catch (err: any) {
-    console.log("API CALL ERROR:", err.response.data);
-    return err.response.data;
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
   }
 };
 
@@ -88,8 +88,8 @@ export const getJoinServerByUserId = async (userId: string) => {
     );
     return res.data;
   } catch (err: any) {
-    console.log("API CALL ERROR:", err.response.data);
-    return err.response.data;
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
   }
 };
 
@@ -105,7 +105,7 @@ export const editUserByUserId = async (user: UserType) => {
 
     return res.data;
   } catch (err: any) {
-    console.log("API CALL ERROR:", err.response.data);
-    return err.response.data;
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
   }
 };
