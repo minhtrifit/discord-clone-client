@@ -109,3 +109,15 @@ export const editUserByUserId = async (user: UserType) => {
     return err?.response?.data;
   }
 };
+
+export const getPendingByEmail = async (email: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/pending/${email}`
+    );
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};

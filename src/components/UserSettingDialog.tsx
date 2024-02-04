@@ -113,7 +113,7 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
         <div>{children}</div>
       </DialogTrigger>
       <DialogContent className="bg-secondary-white dark:bg-primary-gray max-w-[100vw] h-[100vh]">
-        <div className="absolute right-[50px] top-[5px] flex items-center gap-3">
+        <div className="absolute right-[50px] top-[10px] flex items-center gap-3">
           <ThemeToggle />
           <Button
             variant="purple"

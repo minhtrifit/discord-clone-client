@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { useFriendStore, useSocketStore } from "@/lib/store";
+import { usePathname } from "next/navigation";
+
+import { UserType } from "@/types";
 
 import { GrUser } from "react-icons/gr";
 import { BsSpeedometer } from "react-icons/bs";
 import { CiShop } from "react-icons/ci";
-import { usePathname } from "next/navigation";
 
 import UserProfile from "./UserProfile";
 
@@ -29,6 +33,30 @@ const Subslidebar = () => {
       icon: <CiShop size={25} />,
     },
   ];
+
+  const socket = useSocketStore((state) => {
+    return state.socket;
+  });
+
+  const setPendings = useFriendStore((state) => {
+    return state.setPendings;
+  });
+
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "get_friend_request",
+        (rs: { message: string; user: UserType }) => {
+          // console.log("Get friend request:", rs);
+          const { user }: any = rs;
+
+          setPendings(user);
+        }
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
 
   return (
     <div className="relative w-[240px] overflow-x-auto bg-secondary-white dark:bg-primary-gray dark:text-gray-400">

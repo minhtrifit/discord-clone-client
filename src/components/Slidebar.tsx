@@ -13,7 +13,6 @@ const Slidebar = async () => {
   const { user }: any = session;
 
   const serverJoins = await getJoinServerByUserId(user.id);
-  const { joins } = serverJoins;
 
   const DirectMessage: ServerType = {
     id: null,
@@ -25,7 +24,7 @@ const Slidebar = async () => {
       <SlidebarItem server={DirectMessage} />
       <div className="w-[80%] h-[2px] bg-primary-gray dark:bg-secondary-gray"></div>
       <div className="w-[100%] overflow-y-auto">
-        {joins?.map((server: ServerType) => {
+        {serverJoins?.joins?.map((server: ServerType) => {
           return <SlidebarItem key={server.id} server={server} />;
         })}
       </div>

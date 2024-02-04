@@ -5,7 +5,8 @@ import { useSocket } from "@/hooks/useSocket";
 import { useSession } from "next-auth/react";
 import { useSocketStore } from "@/lib/store";
 
-import { GetSocketConntect, StartListeners } from "@/lib/socket";
+import { GetSocketConnect, StartListeners } from "@/lib/socket";
+import { Socket } from "socket.io-client";
 
 type Props = {
   children?: React.ReactNode;
@@ -19,18 +20,21 @@ const SocketProvider = ({ children }: Props) => {
   });
 
   const updateSocket = useSocketStore((state) => state.updateSocket);
+  const updateClientId = useSocketStore((state) => state.updateClientId);
 
   // Socket event
   useEffect(() => {
     socket.connect();
-    updateSocket(socket);
 
     if (session?.user) {
+      updateSocket(socket);
+
       // Listen event to socket
       StartListeners(socket);
 
       // Send event to socket
-      GetSocketConntect(socket, session?.user?.email);
+      GetSocketConnect(socket, session?.user?.email, updateClientId);
+
       //   GetAllUsers(socket);
     }
 
