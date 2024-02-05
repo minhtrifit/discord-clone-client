@@ -55,9 +55,10 @@ const HomePageFooter = () => {
         <div className="w-[100%] h-[2px] bg-primary-purple my-10"></div>
         <div className="w-[100%] flex justify-between">
           <Image
+            className="w-[120px] h-auto"
             src="/images/nav-icon.svg"
-            width={120}
-            height={120}
+            width="0"
+            height="0"
             alt="icon"
           />
           <Link href={"/login"}>

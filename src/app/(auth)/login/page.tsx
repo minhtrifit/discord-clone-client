@@ -16,8 +16,8 @@ const LoginPage = () => {
             style={{ width: "80%", height: "auto" }}
             priority
             src="/images/qr-code.png"
-            width={180}
-            height={180}
+            width="180"
+            height="0"
             alt="icon"
           />
           <div className="flex flex-col items-center gap-1">

@@ -43,25 +43,26 @@ export default function Home() {
           </div>
         </div>
         <Image
-          className="z-10 absolute bottom-0 left-[-100px] md:left-0"
+          className="z-10 absolute bottom-0 left-[-100px] md:left-0 w-[500px] h-auto"
           src="/images/homepage-hero-1.svg"
-          width={500}
-          height={500}
+          width="0"
+          height="0"
           alt="hero1"
         />
         <Image
-          className="z-10 hidden xl:block absolute bottom-0 right-0"
+          className="z-10 hidden xl:block absolute bottom-0 right-0 w-[500px] h-auto"
           src="/images/homepage-hero-2.svg"
-          width={500}
-          height={500}
+          width="0"
+          height="0"
           alt="hero2"
         />
       </div>
       <div className="dark:bg-white flex flex-wrap justify-center md:gap-[150px] py-[100px]">
         <Image
+          className="w-[500px] h-auto"
           src="/images/homepage-hero-3.svg"
-          width={500}
-          height={500}
+          width="0"
+          height="0"
           alt="hero3"
         />
         <div className="max-w-[400px] flex flex-col gap-5">
@@ -87,17 +88,19 @@ export default function Home() {
           </p>
         </div>
         <Image
+          className="w-[500px] h-auto"
           src="/images/homepage-hero-4.svg"
-          width={500}
-          height={500}
-          alt="hero3"
+          width="0"
+          height="0"
+          alt="hero4"
         />
       </div>
       <div className="dark:bg-white flex flex-wrap justify-center md:gap-[150px] py-[100px]">
         <Image
+          className="w-[500px] h-auto"
           src="/images/homepage-hero-5.svg"
-          width={500}
-          height={500}
+          width="0"
+          height="0"
           alt="hero5"
         />
         <div className="max-w-[400px] flex flex-col gap-5">
@@ -123,9 +126,10 @@ export default function Home() {
           </p>
         </div>
         <Image
+          className="w-[1000px] h-auto"
           src="/images/homepage-hero-6.svg"
-          width={1000}
-          height={1000}
+          width="0"
+          height="0"
           alt="hero6"
         />
         <div className="relative flex flex-col items-center gap-8">
@@ -133,9 +137,10 @@ export default function Home() {
             Ready to start your journey?
           </h1>
           <Image
+            className="w-[1000px] h-auto"
             src="/images/homepage-hero-7.svg"
-            width={1000}
-            height={1000}
+            width="0"
+            height="0"
             alt="hero7"
           />
           <Link href={"/download"}>
