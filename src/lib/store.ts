@@ -14,8 +14,10 @@ interface SocketState {
 
 interface FriendState {
   pendings: UserType[];
+  friends: UserType[];
   setPendings: (user: UserType) => void;
   updatePendings: (newPendings: UserType[]) => void;
+  updateFriends: (newFriends: UserType[]) => void;
 }
 
 export const useSocketStore = create<SocketState>()(
@@ -31,9 +33,12 @@ export const useSocketStore = create<SocketState>()(
 export const useFriendStore = create<FriendState>()(
   devtools((set) => ({
     pendings: [],
+    friends: [],
     setPendings: (user: UserType) =>
       set((state) => ({ pendings: [...state.pendings, user] })),
     updatePendings: (newPendings: UserType[]) =>
       set(() => ({ pendings: newPendings })),
+    updateFriends: (newFriends: UserType[]) =>
+      set(() => ({ friends: newFriends })),
   }))
 );

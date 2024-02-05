@@ -38,12 +38,8 @@ const Add = () => {
       return;
     }
 
-    if (socket) {
-      sendFriendRequest(socket, data);
-      toast.success("Send friend request successfully");
-    } else {
-      toast.error("Send friend request failed");
-    }
+    if (socket) sendFriendRequest(socket, data, toast);
+    else toast.error("Send friend request failed");
 
     setFormData({
       friendEmail: "",

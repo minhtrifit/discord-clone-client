@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFriendStore } from "@/lib/store";
+import { useFriendStore, useSocketStore } from "@/lib/store";
 import { useSession } from "next-auth/react";
 
 import { UserType } from "@/types";
@@ -11,16 +11,23 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Image from "next/image";
 
 import { FaCheck } from "react-icons/fa";
 import { MdClear } from "react-icons/md";
 
 import { getPendingByEmail } from "@/lib/action.api";
+import { acceptFriendRequest, ignoreFriendRequest } from "@/lib/socket";
+import { toast } from "react-toastify";
 
 const Pending = () => {
   const { data: session }: any = useSession();
 
   const [list, setList] = useState<UserType[]>([]);
+
+  const socket = useSocketStore((state) => {
+    return state.socket;
+  });
 
   const pendings = useFriendStore((state) => {
     return state.pendings;
@@ -57,6 +64,44 @@ const Pending = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleIgnoreRequest = async (receiverEmail: string) => {
+    if (socket !== null && receiverEmail !== "") {
+      const data = {
+        senderEmail: receiverEmail,
+        receiverEmail: session?.user?.email,
+      };
+
+      // Send socket event
+      ignoreFriendRequest(socket, data);
+
+      // Update new pending list
+      const res = await getPendingByEmail(session?.user?.email);
+      if (res?.message === "Get pending successfully") {
+        updatePendings(res?.pendings);
+        setList(res?.pendings);
+      }
+    } else toast.error("Something wrong");
+  };
+
+  const handleAcceptRequest = async (receiverEmail: string) => {
+    if (socket !== null && receiverEmail !== "") {
+      const data = {
+        senderEmail: receiverEmail,
+        receiverEmail: session?.user?.email,
+      };
+
+      // Send socket event
+      acceptFriendRequest(socket, data);
+
+      // Update new pending list
+      const res = await getPendingByEmail(session?.user?.email);
+      if (res?.message === "Get pending successfully") {
+        updatePendings(res?.pendings);
+        setList(res?.pendings);
+      }
+    } else toast.error("Something wrong");
+  };
+
   return (
     <div className="mt-5">
       <div className="flex flex-col gap-3">
@@ -66,6 +111,13 @@ const Pending = () => {
         </p>
       </div>
       <div className="mt-5">
+        {list?.length === 0 && (
+          <div className="flex flex-col mt-[80px] items-center gap-5">
+            <p className="text-[15px] dark:text-gray-400">
+              There is no pending friend requests. Here is Wumpus for now.
+            </p>
+          </div>
+        )}
         {list?.map((user) => {
           return (
             <div
@@ -94,6 +146,9 @@ const Pending = () => {
                       <div
                         className="text-green-500 flex justify-center items-center rounded-full
                                       bg-primary-white dark:bg-primary-gray p-3"
+                        onClick={() => {
+                          handleAcceptRequest(user?.email ? user?.email : "");
+                        }}
                       >
                         <FaCheck size={20} />
                       </div>
@@ -109,6 +164,9 @@ const Pending = () => {
                       <div
                         className="text-red-500 flex justify-center items-center rounded-full
                                       bg-primary-white dark:bg-primary-gray p-3"
+                        onClick={() => {
+                          handleIgnoreRequest(user?.email ? user?.email : "");
+                        }}
                       >
                         <MdClear size={20} />
                       </div>

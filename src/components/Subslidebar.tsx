@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
 import { usePathname } from "next/navigation";
+import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 import { UserType } from "@/types";
 
@@ -12,8 +14,10 @@ import { BsSpeedometer } from "react-icons/bs";
 import { CiShop } from "react-icons/ci";
 
 import UserProfile from "./UserProfile";
+import { getAllFriendsByEmail } from "@/lib/action.api";
 
 const Subslidebar = () => {
+  const { data: session }: any = useSession();
   const category = usePathname().split("/dashboard/")[1];
 
   const Links = [
@@ -42,6 +46,10 @@ const Subslidebar = () => {
     return state.setPendings;
   });
 
+  const updateFriends = useFriendStore((state) => {
+    return state.updateFriends;
+  });
+
   useEffect(() => {
     if (socket) {
       socket.on(
@@ -53,6 +61,35 @@ const Subslidebar = () => {
           setPendings(user);
         }
       );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  const handleGetFriendsFromDB = async () => {
+    const res = await getAllFriendsByEmail(session?.user?.email);
+    if (res?.message === "Get friends successfully") {
+      // console.log("CHECK RES FRIENDS", res);
+      updateFriends(res?.friends);
+    }
+  };
+
+  useEffect(() => {
+    if (session?.user?.email) handleGetFriendsFromDB();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.user?.email]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("new_friend", (rs: { message: string; user: UserType }) => {
+        console.log("Get friend request:", rs);
+        if (rs?.message === "You have a new friend") {
+          toast.info(`You and ${rs?.user?.email} just become a friend`);
+
+          if (session?.user?.email) handleGetFriendsFromDB();
+        }
+      });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
