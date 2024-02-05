@@ -6,6 +6,8 @@ import { FaMicrophone } from "react-icons/fa6";
 import { IoHeadsetSharp } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 
+import { getSummaryName } from "@/lib/helper";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
@@ -51,7 +53,9 @@ const UserProfile = () => {
           >
             <Avatar className="w-[30px] h-[30px]">
               <AvatarImage src={`${session?.user?.avatar}`} alt="@shadcn" />
-              <AvatarFallback>user</AvatarFallback>
+              <AvatarFallback>
+                {session?.user?.name && getSummaryName(session?.user?.name)}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <p className="w-[70px] truncate font-bold">

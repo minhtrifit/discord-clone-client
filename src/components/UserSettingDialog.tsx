@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 
 import { handleSignOut } from "@/lib/action";
 import { handleFileUpload } from "@/lib/supabase";
+import { editUserByUserId, getUserByEmail } from "@/lib/action.api";
+import { censorPassword, getSummaryName } from "@/lib/helper";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -13,9 +15,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { editUserByUserId, getUserByEmail } from "@/lib/action.api";
 import { toast } from "react-toastify";
-import { censorPassword } from "@/lib/helper";
 
 type ParentComponentProps = {
   children: ReactNode;
@@ -139,7 +139,10 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
                       src={`${session?.user?.avatar}`}
                       alt="avatar"
                     />
-                    <AvatarFallback>user</AvatarFallback>
+                    <AvatarFallback>
+                      {session?.user?.name &&
+                        getSummaryName(session?.user?.name)}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col gap-2">
                     <p className="text-[20px] font-bold">

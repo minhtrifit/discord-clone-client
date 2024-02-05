@@ -8,7 +8,10 @@ const NotFound = () => {
   return (
     <div>
       <HomePageNavbar />
-      <div className="w-[100%] flex gap-10 justify-center flex-wrap-reverse mx-auto py-[100px] px-4">
+      <div
+        className="w-[100%] text-black dark:text-black bg-white dark:bg-white
+                      flex gap-10 justify-center flex-wrap-reverse mx-auto py-[100px] px-4"
+      >
         <div className="flex flex-col gap-5">
           <p className="text-[30px] md:text-[50px] font-black text-primary-purple">
             WRONG TURN?

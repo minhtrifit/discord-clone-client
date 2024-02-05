@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 import { UserType } from "@/types";
 
@@ -11,14 +12,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Image from "next/image";
 
 import { FaCheck } from "react-icons/fa";
 import { MdClear } from "react-icons/md";
 
 import { getPendingByEmail } from "@/lib/action.api";
 import { acceptFriendRequest, ignoreFriendRequest } from "@/lib/socket";
-import { toast } from "react-toastify";
+import { getSummaryName } from "@/lib/helper";
 
 const Pending = () => {
   const { data: session }: any = useSession();
@@ -132,11 +132,15 @@ const Pending = () => {
                     src={user?.avatar ? user?.avatar : ""}
                     alt="avatar"
                   />
-                  <AvatarFallback>user</AvatarFallback>
+                  <AvatarFallback>
+                    {user?.name && getSummaryName(user?.name)}
+                  </AvatarFallback>
                 </Avatar>
-                <div className="text-[13px]">
-                  <p className="font-black">{user?.name}</p>
-                  <p>{user?.email}</p>
+                <div className="text-[13px] flex flex-col gap-[3px]">
+                  <p className="font-bold">{user?.name}</p>
+                  <p className="text-[12px] dark:text-gray-300">
+                    {user?.email}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">

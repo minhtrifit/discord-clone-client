@@ -1,4 +1,6 @@
 import { ChangeEvent, useState } from "react";
+import { useFriendStore } from "@/lib/store";
+import { getSummaryName } from "@/lib/helper";
 
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,7 +20,6 @@ import { IoSearch } from "react-icons/io5";
 import { IoMdMore } from "react-icons/io";
 import { MdClear } from "react-icons/md";
 import { AiOutlineMessage } from "react-icons/ai";
-import { useFriendStore } from "@/lib/store";
 
 const All = () => {
   const [searchInput, setSearchInput] = useState<string>("");
@@ -84,11 +85,15 @@ const All = () => {
                       src={`${friend?.avatar ? friend?.avatar : ""}`}
                       alt="avatar"
                     />
-                    <AvatarFallback>user</AvatarFallback>
+                    <AvatarFallback>
+                      {friend?.name && getSummaryName(friend?.name)}
+                    </AvatarFallback>
                   </Avatar>
-                  <div className="text-[13px]">
-                    <p className="font-black">{friend?.name}</p>
-                    <p>{friend?.email}</p>
+                  <div className="text-[13px] flex flex-col gap-[3px]">
+                    <p className="font-bold">{friend?.name}</p>
+                    <p className="text-[12px] dark:text-gray-300">
+                      {friend?.email}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
