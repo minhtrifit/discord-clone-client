@@ -10,11 +10,12 @@ import { IoMdPersonAdd } from "react-icons/io";
 import All from "@/components/friends/All";
 import Pending from "@/components/friends/Pending";
 import Add from "@/components/friends/Add";
+import FriendOnline from "@/components/FriendOnline";
 
 const FriendPage = () => {
   return (
-    <div className="relative p-6 w-[calc(100vw-320px)]">
-      <Tabs className="w-[100%]">
+    <div className="w-[calc(100vw-320px)] flex overflow-y-auto">
+      <Tabs className="w-[100%] p-6">
         <TabList>
           <Tab>
             <div className="flex items-center gap-3">
@@ -46,6 +47,9 @@ const FriendPage = () => {
           <Add />
         </TabPanel>
       </Tabs>
+      <div className="hidden min-[900px]:flex w-[300px] h-screen border-2 border-l-primary-white dark:border-l-primary-gray">
+        <FriendOnline />
+      </div>
     </div>
   );
 };
