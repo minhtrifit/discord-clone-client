@@ -122,7 +122,7 @@ const Pending = () => {
           return (
             <div
               key={user.id}
-              className="w-[100%] border border-gray-400 border-t-[1px] border-l-0 border-r-0 border-b-0
+              className="group w-[100%] border border-gray-400 border-t-[1px] border-l-0 border-r-0 border-b-0
                       px-2 py-4 flex items-center justify-between
                       hover:bg-secondary-white hover:dark:bg-primary-gray hover:cursor-pointer"
             >
@@ -149,7 +149,8 @@ const Pending = () => {
                     <TooltipTrigger asChild>
                       <div
                         className="text-green-500 flex justify-center items-center rounded-full
-                                      bg-primary-white dark:bg-primary-gray p-3"
+                                  bg-primary-white dark:bg-primary-gray
+                                  group-hover:dark:bg-primary-black p-3"
                         onClick={() => {
                           handleAcceptRequest(user?.email ? user?.email : "");
                         }}
@@ -167,7 +168,8 @@ const Pending = () => {
                     <TooltipTrigger asChild>
                       <div
                         className="text-red-500 flex justify-center items-center rounded-full
-                                      bg-primary-white dark:bg-primary-gray p-3"
+                                  bg-primary-white dark:bg-primary-gray
+                                  group-hover:dark:bg-primary-black p-3"
                         onClick={() => {
                           handleIgnoreRequest(user?.email ? user?.email : "");
                         }}

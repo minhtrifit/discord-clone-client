@@ -50,6 +50,10 @@ const Subslidebar = () => {
     return state.updateFriends;
   });
 
+  const setLoading = useFriendStore((state) => {
+    return state.setLoading;
+  });
+
   useEffect(() => {
     if (socket) {
       socket.on(
@@ -67,11 +71,13 @@ const Subslidebar = () => {
   }, [socket]);
 
   const handleGetFriendsFromDB = async () => {
+    setLoading(true);
     const res = await getAllFriendsByEmail(session?.user?.email);
     if (res?.message === "Get friends successfully") {
       // console.log("CHECK RES FRIENDS", res);
       updateFriends(res?.friends);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

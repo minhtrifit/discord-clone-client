@@ -16,12 +16,14 @@ interface FriendState {
   pendings: UserType[];
   friends: UserType[];
   onlines: UserType[];
+  loading: boolean;
   setPendings: (user: UserType) => void;
   updatePendings: (newPendings: UserType[]) => void;
   updateFriends: (newFriends: UserType[]) => void;
   setOnlines: (user: UserType) => void;
   filterOnlines: (user: UserType) => void;
   updateOnlines: (newOnlines: UserType[]) => void;
+  setLoading: (value: boolean) => void;
 }
 
 export const useSocketStore = create<SocketState>()(
@@ -39,6 +41,7 @@ export const useFriendStore = create<FriendState>()(
     pendings: [],
     friends: [],
     onlines: [],
+    loading: false,
     setPendings: (user: UserType) =>
       set((state) => ({ pendings: [...state.pendings, user] })),
     updatePendings: (newPendings: UserType[]) =>
@@ -55,5 +58,6 @@ export const useFriendStore = create<FriendState>()(
       })),
     updateOnlines: (newOnlines: UserType[]) =>
       set(() => ({ onlines: newOnlines })),
+    setLoading: (value: boolean) => set(() => ({ loading: value })),
   }))
 );

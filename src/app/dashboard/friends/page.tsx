@@ -47,7 +47,7 @@ const FriendPage = () => {
           <Add />
         </TabPanel>
       </Tabs>
-      <div className="hidden min-[900px]:flex w-[300px] h-screen border-2 border-l-primary-white dark:border-l-primary-gray">
+      <div className="hidden min-[900px]:flex w-[350px] h-screen border-2 border-l-primary-white dark:border-l-primary-gray">
         <FriendOnline />
       </div>
     </div>

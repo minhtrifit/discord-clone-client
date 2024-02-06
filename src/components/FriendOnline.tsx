@@ -79,8 +79,21 @@ const FriendOnline = () => {
     <div className="p-6">
       <p className="font-bold">Active Now</p>
       <div className="flex flex-col mt-8">
-        <p className="text-[13px] font-bold dark:text-gray-400">ONLINE-3</p>
+        <p className="text-[13px] font-bold dark:text-gray-400">
+          ONLINE-{onlines?.length ? onlines?.length : "0"}
+        </p>
         <div className="mt-5 flex flex-col gap-5">
+          {onlines?.length === 0 && (
+            <div className="flex flex-col gap-3 items-center">
+              <p className="text-center text-[15px] font-semibold">
+                It is quiet for now...
+              </p>
+              <p className="text-center text-[12px] dark:text-gray-400">
+                When a friend starts an activity-like playing a game or hanging
+                out on voice-we will show it here!
+              </p>
+            </div>
+          )}
           {onlines?.map((friend) => {
             return (
               <div key={friend.id} className="flex items-center gap-3">
