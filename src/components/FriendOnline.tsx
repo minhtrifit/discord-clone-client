@@ -2,7 +2,7 @@
 
 import { useFriendStore, useSocketStore } from "@/lib/store";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserType } from "@/types";

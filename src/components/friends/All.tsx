@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import { useFriendStore } from "@/lib/store";
+import { useFriendStore, useSocketStore } from "@/lib/store";
 import { getSummaryName } from "@/lib/helper";
 
 import { Input } from "@/components/ui/input";
@@ -16,13 +16,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { UserType } from "@/types";
+
 import { IoSearch } from "react-icons/io5";
 import { IoMdMore } from "react-icons/io";
 import { MdClear } from "react-icons/md";
 import { AiOutlineMessage } from "react-icons/ai";
+import { useSession } from "next-auth/react";
 
 const All = () => {
   const [searchInput, setSearchInput] = useState<string>("");
+
+  const { data: session }: any = useSession();
+
+  const socket = useSocketStore((state) => {
+    return state.socket;
+  });
 
   const friends = useFriendStore((state) => {
     return state.friends;
@@ -32,9 +41,26 @@ const All = () => {
     return state.loading;
   });
 
+  const setDirectMessages = useFriendStore((state) => {
+    return state.setDirectMessages;
+  });
+
   const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     console.log(e.target.value);
+  };
+
+  const handleCreateDirectMessage = async (friendEmail: string | undefined) => {
+    if (socket && session?.user?.email) {
+      socket.emit(
+        "create_direct_message",
+        { ownerEmail: session?.user?.email, friendEmail: friendEmail },
+        (res: { message: string; friend: UserType }) => {
+          console.log("Check create direct message:", res);
+          if (res?.friend) setDirectMessages(res?.friend);
+        }
+      );
+    }
   };
 
   return (
@@ -113,6 +139,9 @@ const All = () => {
                           <div
                             className="flex justify-center items-center rounded-full bg-primary-white dark:bg-primary-gray
                           group-hover:dark:bg-primary-black p-3"
+                            onClick={() => {
+                              handleCreateDirectMessage(friend?.email);
+                            }}
                           >
                             <AiOutlineMessage size={25} />
                           </div>

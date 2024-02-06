@@ -6,19 +6,34 @@ import { useFriendStore, useSocketStore } from "@/lib/store";
 import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
+import {
+  getAllDirectMessagesByEmail,
+  getAllFriendsByEmail,
+} from "@/lib/action.api";
+import { getSummaryName } from "@/lib/helper";
 
 import { UserType } from "@/types";
 
 import { GrUser } from "react-icons/gr";
 import { BsSpeedometer } from "react-icons/bs";
 import { CiShop } from "react-icons/ci";
+import { IoMdAdd } from "react-icons/io";
+import { MdClear } from "react-icons/md";
 
 import UserProfile from "./UserProfile";
-import { getAllFriendsByEmail } from "@/lib/action.api";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Subslidebar = () => {
   const { data: session }: any = useSession();
   const category = usePathname().split("/dashboard/")[1];
+
+  // console.log(category);
 
   const Links = [
     {
@@ -54,6 +69,14 @@ const Subslidebar = () => {
     return state.setLoading;
   });
 
+  const directMessages = useFriendStore((state) => {
+    return state.directMessages;
+  });
+
+  const updateDirectMessages = useFriendStore((state) => {
+    return state.updateDirectMessages;
+  });
+
   useEffect(() => {
     if (socket) {
       socket.on(
@@ -80,8 +103,19 @@ const Subslidebar = () => {
     setLoading(false);
   };
 
+  const handleGetDirectMessagesFromDB = async () => {
+    const res = await getAllDirectMessagesByEmail(session?.user?.email);
+    if (res?.message === "Get direct messages successfully") {
+      // console.log("CHECK RES DIRECT MESS", res);
+      if (res?.friends) updateDirectMessages(res?.friends);
+    }
+  };
+
   useEffect(() => {
-    if (session?.user?.email) handleGetFriendsFromDB();
+    if (session?.user?.email) {
+      handleGetFriendsFromDB();
+      handleGetDirectMessagesFromDB();
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user?.email]);
@@ -103,9 +137,9 @@ const Subslidebar = () => {
 
   return (
     <div className="relative w-[240px] overflow-x-auto bg-secondary-white dark:bg-primary-gray dark:text-gray-400">
-      <div className="p-3 flex border border-b-primary-black">
+      <div className="px-2 py-3 flex items-center justify-center border border-b-primary-black">
         <input
-          className="h-[30px] dark:bg-primary-black pl-4 pr-8 py-2 text-[12px] rounded-md outline-none"
+          className="h-[30px] w-[100%] dark:bg-primary-black pl-4 pr-8 py-2 text-[12px] rounded-md outline-none"
           type="text"
           placeholder="Find or start a conversation"
         />
@@ -116,9 +150,10 @@ const Subslidebar = () => {
             <Link key={item.name} href={item.url}>
               <div
                 className={`px-2 py-3 rounded-md text-[14px] flex items-center gap-5
-                            text-gray-600 hover:bg-primary-white hover:text-primary-black
-                            dark:text-gray-400 dark:hover:bg-secondary-gray dark:hover:text-white ${
+                            text-gray-600 hover:bg-zinc-300 hover:text-primary-black
+                            dark:text-gray-400 dark:hover:bg-zinc-700 dark:hover:text-white ${
                               category !== undefined &&
+                              !category.includes("/messages") &&
                               category?.includes(item.name.toLowerCase()) &&
                               "bg-primary-white text-primary-gray dark:bg-secondary-gray dark:text-white"
                             }`}
@@ -130,6 +165,56 @@ const Subslidebar = () => {
           );
         })}
       </div>
+      <div
+        className="w-[100%] mt-5 overflow-y-auto flex items-center justify-between px-6 text-[12px] dark:text-gray-400 font-bold
+                      hover:dark:text-gray-300"
+      >
+        <p>DIRECT MESSAGES</p>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="hover:cursor-pointer">
+                <IoMdAdd size={20} />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Create DM</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <div className="flex flex-col gap-1 px-3 mt-5">
+        {directMessages?.map((user) => {
+          return (
+            <Link key={user?.id} href={`/dashboard/friends/messages/1`}>
+              <div
+                className={`flex items-center justify-between pl-3 pr-4 py-2 rounded-md
+                            hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:cursor-pointer
+                            bg-primary-white dark:bg-secondary-gray`}
+              >
+                <div className="flex items-center gap-2">
+                  <Avatar className="w-[30px] h-[30px]">
+                    <AvatarImage
+                      src={`${user?.avatar ? user?.avatar : ""}`}
+                      alt="avatar"
+                    />
+                    <AvatarFallback>
+                      {user?.name && getSummaryName(user?.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="dark:text-white text-[13px] max-w-[200px]">
+                    {user?.name}
+                  </p>
+                </div>
+                <div className="hover:text-white">
+                  <MdClear />
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+
       <UserProfile />
     </div>
   );

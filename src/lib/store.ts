@@ -17,6 +17,7 @@ interface FriendState {
   friends: UserType[];
   onlines: UserType[];
   loading: boolean;
+  directMessages: UserType[];
   setPendings: (user: UserType) => void;
   updatePendings: (newPendings: UserType[]) => void;
   updateFriends: (newFriends: UserType[]) => void;
@@ -24,6 +25,9 @@ interface FriendState {
   filterOnlines: (user: UserType) => void;
   updateOnlines: (newOnlines: UserType[]) => void;
   setLoading: (value: boolean) => void;
+  setDirectMessages: (newFriend: UserType) => void;
+  updateDirectMessages: (newDirectMessages: UserType[]) => void;
+  filterDirectMessages: (newFriend: UserType) => void;
 }
 
 export const useSocketStore = create<SocketState>()(
@@ -42,6 +46,7 @@ export const useFriendStore = create<FriendState>()(
     friends: [],
     onlines: [],
     loading: false,
+    directMessages: [],
     setPendings: (user: UserType) =>
       set((state) => ({ pendings: [...state.pendings, user] })),
     updatePendings: (newPendings: UserType[]) =>
@@ -59,5 +64,15 @@ export const useFriendStore = create<FriendState>()(
     updateOnlines: (newOnlines: UserType[]) =>
       set(() => ({ onlines: newOnlines })),
     setLoading: (value: boolean) => set(() => ({ loading: value })),
+    setDirectMessages: (user: UserType) =>
+      set((state) => ({ directMessages: [...state.directMessages, user] })),
+    updateDirectMessages: (newDirectMessages: UserType[]) =>
+      set(() => ({ directMessages: newDirectMessages })),
+    filterDirectMessages: (user: UserType) =>
+      set((state) => ({
+        directMessages: state.directMessages.filter((u) => {
+          return u.email !== user.email;
+        }),
+      })),
   }))
 );
