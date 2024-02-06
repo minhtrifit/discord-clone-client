@@ -1,28 +1,102 @@
 "use client";
 
+import { useFriendStore, useSocketStore } from "@/lib/store";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserType } from "@/types";
+import { getSummaryName } from "@/lib/helper";
 
 const FriendOnline = () => {
+  const { data: session }: any = useSession();
+
+  const socket = useSocketStore((state) => {
+    return state.socket;
+  });
+
+  const onlines = useFriendStore((state) => {
+    return state.onlines;
+  });
+
+  const updateOnlines = useFriendStore((state) => {
+    return state.updateOnlines;
+  });
+
+  const filterOnlines = useFriendStore((state) => {
+    return state.filterOnlines;
+  });
+
+  useEffect(() => {
+    if (socket && session?.user?.email) {
+      socket.emit(
+        "get_online_friends",
+        { email: session?.user?.email },
+        (rs: any) => {
+          // console.log("Get online friends", rs.onlines);
+          if (rs?.onlines) updateOnlines(rs?.onlines);
+        }
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, session?.user?.email]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "friend_connected",
+        (rs: { message: string; friend: UserType }) => {
+          // console.log("Check offline friend:", rs);
+          if (rs?.friend) {
+            const newOnlines = onlines;
+            newOnlines.push(rs?.friend);
+
+            const uniqueObjects = newOnlines?.filter((item, index, self) => {
+              return (
+                self.findIndex((obj) => obj.email === item.email) === index
+              );
+            });
+
+            updateOnlines(uniqueObjects);
+          }
+        }
+      );
+
+      socket.on(
+        "friend_disconnected",
+        (rs: { message: string; friend: UserType }) => {
+          // console.log("Check offline friend:", rs);
+          if (rs?.friend) filterOnlines(rs?.friend);
+        }
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
   return (
     <div className="p-6">
       <p className="font-bold">Active Now</p>
       <div className="flex flex-col mt-8">
         <p className="text-[13px] font-bold dark:text-gray-400">ONLINE-3</p>
         <div className="mt-5 flex flex-col gap-5">
-          <div className="flex items-center gap-3">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="avatar" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <p className="text-[13px] font-semibold">Lê Minh Trí</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="avatar" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <p className="text-[13px] font-semibold">Lê Minh Trí</p>
-          </div>
+          {onlines?.map((friend) => {
+            return (
+              <div key={friend.id} className="flex items-center gap-3">
+                <Avatar>
+                  <AvatarImage
+                    src={`${friend?.avatar ? friend?.avatar : ""}`}
+                    alt="avatar"
+                  />
+                  <AvatarFallback>
+                    {friend?.name && getSummaryName(friend?.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <p className="text-[13px] font-semibold">{friend?.name}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
