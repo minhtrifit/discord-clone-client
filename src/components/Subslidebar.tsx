@@ -216,7 +216,7 @@ const Subslidebar = () => {
         </TooltipProvider>
       </div>
       <div className="flex flex-col gap-1 px-3 mt-5">
-        <div className="w-[100%] max-h-[600px] overflow-y-auto">
+        <div className="w-[100%] max-h-[calc(100vh-380px)] overflow-y-auto">
           {directMessages?.map((user) => {
             return (
               <div

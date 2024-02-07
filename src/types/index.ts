@@ -13,5 +13,12 @@ export interface UserType {
   password?: string | null;
   avatar?: string | null;
   provider?: string;
-  created?: Date;
+  created?: Date | string;
+}
+
+export interface DirectMessageChatType {
+  id?: string;
+  user: UserType | any;
+  text: string;
+  sended?: string;
 }

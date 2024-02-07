@@ -145,3 +145,15 @@ export const getAllDirectMessagesByEmail = async (email: string) => {
     return err?.response?.data;
   }
 };
+
+export const getUserById = async (id: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/id/${id}`
+    );
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};

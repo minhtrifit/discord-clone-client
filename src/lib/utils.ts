@@ -1,4 +1,4 @@
-import { ServerType } from "@/types";
+import { ServerType, DirectMessageChatType } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -190,5 +190,62 @@ export const ServerData: ServerType[] = [
     name: "Coder Group",
     owner: 2538,
     avatar: "https://github.com/shadcn.png",
+  },
+];
+
+export const DirectMessageChatData: DirectMessageChatType[] = [
+  {
+    user: {
+      id: "5c16c27e-227d-44f7-bd3c-b06f1cfbb4ea",
+      provider: "email",
+      email: "cauthuminhtri10@gmail.com",
+      name: "Trí Đẹp Trai",
+      password: "$2b$10$1bo8Ytn61Ox5Idg3HBCUUeydIUwAF3l2BOWa/h.xLdIpFGu8lCL3S",
+      avatar:
+        "https://piwwbijgpwvzynpsplfn.supabase.co/storage/v1/object/public/uploads/user_avatars/file_1707149013190.png",
+      created: "2024-02-05T10:23:06.477Z",
+    },
+    text: "Hello",
+    sended: "2024-02-05T06:08:22.692Z",
+  },
+  {
+    user: {
+      id: "9f9f3417-5021-492b-ae2f-e77d608e10a4",
+      provider: "github",
+      email: "minhtri.fit@gmail.com",
+      name: "Lê Minh Trí",
+      password: null,
+      avatar: "https://avatars.githubusercontent.com/u/86849422?v=4",
+      created: "2024-02-03T15:51:34.999Z",
+    },
+    text: "Nice to meet you",
+    sended: "2024-02-05T10:23:06.477Z",
+  },
+  {
+    user: {
+      id: "9f9f3417-5021-492b-ae2f-e77d608e10a4",
+      provider: "github",
+      email: "minhtri.fit@gmail.com",
+      name: "Lê Minh Trí",
+      password: null,
+      avatar: "https://avatars.githubusercontent.com/u/86849422?v=4",
+      created: "2024-02-03T15:51:34.999Z",
+    },
+    text: "How about your project",
+    sended: "2024-02-05T10:23:06.477Z",
+  },
+  {
+    user: {
+      id: "5c16c27e-227d-44f7-bd3c-b06f1cfbb4ea",
+      provider: "email",
+      email: "cauthuminhtri10@gmail.com",
+      name: "Trí Đẹp Trai",
+      password: "$2b$10$1bo8Ytn61Ox5Idg3HBCUUeydIUwAF3l2BOWa/h.xLdIpFGu8lCL3S",
+      avatar:
+        "https://piwwbijgpwvzynpsplfn.supabase.co/storage/v1/object/public/uploads/user_avatars/file_1707149013190.png",
+      created: "2024-02-05T10:23:06.477Z",
+    },
+    text: "It's still in progress, thank you",
+    sended: "2024-02-05T06:08:22.692Z",
   },
 ];
