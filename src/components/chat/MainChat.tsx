@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 
@@ -69,7 +69,7 @@ const MainChat = () => {
   useEffect(() => {
     if (
       chatBoxRef?.current?.clientHeight &&
-      chatBoxRef?.current?.clientHeight > screenHeight - 250
+      chatBoxRef?.current?.clientHeight > screenHeight - 210
     )
       setIsOverFlow(true);
 
@@ -173,9 +173,9 @@ const MainChat = () => {
             type="text"
             placeholder={`Message @${friend?.name}`}
             value={formData.message}
-            onChange={(e) =>
-              setFormData({ ...formData, message: e.target.value })
-            }
+            onChange={(e) => {
+              setFormData({ ...formData, message: e.target.value });
+            }}
           />
           <div className="absolute top-[15px] right-[20px] flex items-center gap-3">
             <button

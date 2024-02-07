@@ -139,18 +139,19 @@ const Subslidebar = () => {
   }, [socket]);
 
   const handleDeleteDirectMessage = (friendEmail: string | undefined) => {
+    router.push("/dashboard/friends");
+
     if (socket && session?.user?.email && friendEmail !== undefined) {
       socket.emit(
         "delete_direct_message",
         { ownerEmail: session?.user?.email, friendEmail: friendEmail },
         (res: { message: string; friend: UserType }) => {
-          // console.log("Check delete direct message:", res);
+          console.log("Check delete direct message:", res);
           if (
             res.message === "Delete direct message, successfully" &&
             res?.friend
           ) {
             filterDirectMessages(res?.friend);
-            router.push("/dashboard/friends");
           }
         }
       );

@@ -82,7 +82,7 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
     setLoading(true);
 
     const res = await editUserByUserId(editUser);
-    console.log(res);
+    // console.log(res);
     const { message } = res;
 
     if (message === "Edit user successfully")
