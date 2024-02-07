@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
 import { getSummaryName } from "@/lib/helper";
 
@@ -26,6 +26,7 @@ import { useSession } from "next-auth/react";
 
 const All = () => {
   const [searchInput, setSearchInput] = useState<string>("");
+  const [searchFriends, setSearchFriends] = useState<UserType[]>([]);
 
   const { data: session }: any = useSession();
 
@@ -45,18 +46,39 @@ const All = () => {
     return state.setDirectMessages;
   });
 
+  useEffect(() => {
+    if (friends && searchInput === "") {
+      setSearchFriends(friends);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [friends, searchInput]);
+
   const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
-    console.log(e.target.value);
+    if (friends?.length !== 0) {
+      const filterFriends = friends?.filter((friend) => {
+        return (
+          friend?.name
+            ?.toLocaleLowerCase()
+            .includes(e.target.value.toLowerCase()) ||
+          friend?.email
+            ?.toLocaleLowerCase()
+            .includes(e.target.value.toLowerCase())
+        );
+      });
+
+      setSearchFriends(filterFriends);
+    }
   };
 
   const handleCreateDirectMessage = async (friendEmail: string | undefined) => {
-    if (socket && session?.user?.email) {
+    if (socket && session?.user?.email && friendEmail !== undefined) {
       socket.emit(
         "create_direct_message",
         { ownerEmail: session?.user?.email, friendEmail: friendEmail },
         (res: { message: string; friend: UserType }) => {
-          console.log("Check create direct message:", res);
+          // console.log("Check create direct message:", res);
           if (res?.friend) setDirectMessages(res?.friend);
         }
       );
@@ -106,8 +128,15 @@ const All = () => {
               </p>
             </div>
           )}
+          {!loading && searchInput !== "" && searchFriends?.length === 0 && (
+            <div className="flex flex-col mt-[80px] items-center gap-5">
+              <p className="text-[15px] dark:text-gray-400">
+                No one with your search to play with Wumpus.
+              </p>
+            </div>
+          )}
           {!loading &&
-            friends?.map((friend) => {
+            searchFriends?.map((friend) => {
               return (
                 <div
                   key={friend.id}

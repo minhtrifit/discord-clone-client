@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import {
@@ -31,9 +31,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Subslidebar = () => {
   const { data: session }: any = useSession();
+  const router = useRouter();
   const category = usePathname().split("/dashboard/")[1];
-
-  // console.log(category);
 
   const Links = [
     {
@@ -75,6 +74,10 @@ const Subslidebar = () => {
 
   const updateDirectMessages = useFriendStore((state) => {
     return state.updateDirectMessages;
+  });
+
+  const filterDirectMessages = useFriendStore((state) => {
+    return state.filterDirectMessages;
   });
 
   useEffect(() => {
@@ -135,6 +138,35 @@ const Subslidebar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
+  const handleDeleteDirectMessage = (friendEmail: string | undefined) => {
+    if (socket && session?.user?.email && friendEmail !== undefined) {
+      socket.emit(
+        "delete_direct_message",
+        { ownerEmail: session?.user?.email, friendEmail: friendEmail },
+        (res: { message: string; friend: UserType }) => {
+          // console.log("Check delete direct message:", res);
+          if (
+            res.message === "Delete direct message, successfully" &&
+            res?.friend
+          ) {
+            filterDirectMessages(res?.friend);
+            router.push("/dashboard/friends");
+          }
+        }
+      );
+    }
+  };
+
+  const getDirectMessageId = (userId: string | undefined) => {
+    const arr = category.split("/");
+    if (userId !== undefined && arr?.length && arr?.length === 3) {
+      const id = arr[arr?.length - 1];
+      if (userId === id) return true;
+      return false;
+    }
+    return false;
+  };
+
   return (
     <div className="relative w-[240px] overflow-x-auto bg-secondary-white dark:bg-primary-gray dark:text-gray-400">
       <div className="px-2 py-3 flex items-center justify-center border border-b-primary-black">
@@ -184,37 +216,47 @@ const Subslidebar = () => {
         </TooltipProvider>
       </div>
       <div className="flex flex-col gap-1 px-3 mt-5">
-        {directMessages?.map((user) => {
-          return (
-            <Link key={user?.id} href={`/dashboard/friends/messages/1`}>
+        <div className="w-[100%] max-h-[600px] overflow-y-auto">
+          {directMessages?.map((user) => {
+            return (
               <div
-                className={`flex items-center justify-between pl-3 pr-4 py-2 rounded-md
-                            hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:cursor-pointer
-                            bg-primary-white dark:bg-secondary-gray`}
+                key={user?.id}
+                className={`flex items-center justify-between pl-2 pr-4 py-2 rounded-md
+                hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:cursor-pointer
+                ${
+                  getDirectMessageId(user?.id) &&
+                  "bg-primary-white dark:bg-secondary-gray"
+                }`}
               >
-                <div className="flex items-center gap-2">
-                  <Avatar className="w-[30px] h-[30px]">
-                    <AvatarImage
-                      src={`${user?.avatar ? user?.avatar : ""}`}
-                      alt="avatar"
-                    />
-                    <AvatarFallback>
-                      {user?.name && getSummaryName(user?.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <p className="dark:text-white text-[13px] max-w-[200px]">
-                    {user?.name}
-                  </p>
-                </div>
-                <div className="hover:text-white">
+                <Link href={`/dashboard/friends/messages/${user?.id}`}>
+                  <div className="flex items-center gap-3">
+                    <Avatar className="w-[30px] h-[30px]">
+                      <AvatarImage
+                        src={`${user?.avatar ? user?.avatar : ""}`}
+                        alt="avatar"
+                      />
+                      <AvatarFallback>
+                        {user?.name && getSummaryName(user?.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <p className="dark:text-white text-[13px] max-w-[200px]">
+                      {user?.name}
+                    </p>
+                  </div>
+                </Link>
+                <div
+                  className="hover:text-white"
+                  onClick={() => {
+                    handleDeleteDirectMessage(user?.email);
+                  }}
+                >
                   <MdClear />
                 </div>
               </div>
-            </Link>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-
       <UserProfile />
     </div>
   );
