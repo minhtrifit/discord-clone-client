@@ -19,6 +19,11 @@ export interface UserType {
 export interface DirectMessageChatType {
   id?: string;
   user: UserType | any;
+  userId?: string;
+  friendId?: string;
   text: string;
+  type?: string;
+  provider?: string;
+  url?: string;
   sended?: string;
 }

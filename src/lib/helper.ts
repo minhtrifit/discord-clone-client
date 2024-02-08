@@ -25,3 +25,22 @@ export const getSummaryName = (name: string) => {
 
   return name.charAt(0); // Kyle => K
 };
+
+export const formatDateStr = (dateStr: string) => {
+  const date = new Date(dateStr);
+
+  const formattedDate = date.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+  });
+
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour12: true,
+    hour: "numeric",
+    minute: "numeric",
+  });
+
+  const formattedDateTime = formattedDate + " " + formattedTime;
+  return formattedDateTime;
+};

@@ -8,6 +8,8 @@ import { handleFileUpload } from "@/lib/supabase";
 import { editUserByUserId, getUserByEmail } from "@/lib/action.api";
 import { censorPassword, getSummaryName } from "@/lib/helper";
 
+import { IoIosLogOut } from "react-icons/io";
+
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
@@ -115,14 +117,14 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
       <DialogContent className="bg-secondary-white dark:bg-primary-gray max-w-[100vw] h-[100vh]">
         <div className="absolute right-[50px] top-[10px] flex items-center gap-3">
           <ThemeToggle />
-          <Button
+          {/* <Button
             variant="purple"
             onClick={() => {
               handleSignOut();
             }}
           >
             Log Out
-          </Button>
+          </Button> */}
         </div>
         <Tabs>
           <TabList>
@@ -131,35 +133,49 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
           </TabList>
 
           <TabPanel>
-            <div className="mt-10 flex justify-center">
-              <div className="flex flex-col gap-5 bg-white dark:bg-primary-black w-[100%] md:w-[900px] p-4 rounded-md">
-                <div className="flex gap-3 items-end">
-                  <Avatar className="w-[100px] h-[100px]">
-                    <AvatarImage
-                      src={`${session?.user?.avatar}`}
-                      alt="avatar"
-                    />
-                    <AvatarFallback>
-                      {session?.user?.name &&
-                        getSummaryName(session?.user?.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col gap-2">
-                    <p className="text-[20px] font-bold">
-                      {session?.user?.name}
-                    </p>
-                    <p className="dark:text-secondary-white text-[15px] font-semibold">
-                      {session?.user?.email}
-                    </p>
+            <div className="mt-10 flex justify-center max-h-[100vh] overflow-y-auto">
+              <div className="flex flex-col gap-5 bg-white dark:bg-primary-black w-[100%] lg:w-[900px] p-4 rounded-md">
+                <div className="flex justify-between">
+                  <div className="flex gap-5 items-center">
+                    <Avatar className="w-[100px] h-[100px]">
+                      <AvatarImage
+                        src={`${session?.user?.avatar}`}
+                        alt="avatar"
+                      />
+                      <AvatarFallback>
+                        {session?.user?.name &&
+                          getSummaryName(session?.user?.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[20px] font-bold">
+                        {session?.user?.name}
+                      </p>
+                      <p className="text-zinc-500 dark:text-zinc-400 text-[13px] font-semibold">
+                        {session?.user?.email}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <Button
+                      className="flex items-center gap-2"
+                      variant="destructive"
+                      onClick={() => {
+                        handleSignOut();
+                      }}
+                    >
+                      <IoIosLogOut size={20} />
+                      <p>Log out</p>
+                    </Button>
                   </div>
                 </div>
                 <form
-                  className="p-4 rounded-md flex flex-col gap-5 dark:bg-primary-gray"
+                  className="p-4 rounded-md flex flex-col gap-5 bg-zinc-100 dark:bg-primary-gray"
                   onSubmit={handleEditUserProfile}
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex flex-col gap-2 text-[15px]">
-                      <p className="font-black">USER ID</p>
+                      <p className="font-black dark:text-zinc-400">USER ID</p>
                       <p className="truncate max-w-[200px] md:max-w-[500px]">
                         {session?.user?.id}
                       </p>
@@ -170,7 +186,9 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex flex-col gap-2 text-[15px]">
-                      <p className="font-black">DISPLAY NAME</p>
+                      <p className="font-black dark:text-zinc-400">
+                        DISPLAY NAME
+                      </p>
                       <Input
                         className="w-[200px] md:w-[600px]"
                         type="text"
@@ -191,7 +209,7 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex flex-col gap-2 text-[15px]">
-                      <p className="font-black">PROVIDER</p>
+                      <p className="font-black dark:text-zinc-400">PROVIDER</p>
                       <p className="truncate max-w-[200px] md:max-w-[500px]">
                         {session?.user?.provider}
                       </p>
@@ -202,7 +220,7 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex flex-col gap-2 text-[15px]">
-                      <p className="font-black">Avatar</p>
+                      <p className="font-black dark:text-zinc-400">AVATAR</p>
                       <Input
                         className="w-[200px] md:w-[600px]"
                         type="file"
@@ -229,7 +247,7 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex flex-col gap-2 text-[15px]">
-                      <p className="font-black">PASSWORD</p>
+                      <p className="font-black dark:text-zinc-400">PASSWORD</p>
                       <Input
                         className="w-[200px] md:w-[600px]"
                         type="password"

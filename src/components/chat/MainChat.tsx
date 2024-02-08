@@ -3,29 +3,36 @@
 import React, { use, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useSocketStore } from "@/lib/store";
 
 import { DirectMessageChatType, UserType } from "@/types";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { toast } from "react-toastify";
 
 import { IoSend } from "react-icons/io5";
 import { FaFile } from "react-icons/fa6";
 import { MdEmojiEmotions } from "react-icons/md";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 import { getUserById } from "@/lib/action.api";
-import { getSummaryName } from "@/lib/helper";
+import { getSummaryName, formatDateStr } from "@/lib/helper";
 
-import { DirectMessageChatData } from "@/lib/utils";
+// import { DirectMessageChatData } from "@/lib/utils";
 
 const MainChat = () => {
   const params = useParams();
   const { data: session }: any = useSession();
 
   const [friend, setFriend] = useState<UserType | null>(null);
-  const [messages, setMesages] = useState<DirectMessageChatType[]>(
-    DirectMessageChatData
-  );
+  const [messages, setMesages] = useState<DirectMessageChatType[]>([]);
   const [formData, setFormData] = useState<any>({
     message: "",
   });
@@ -35,6 +42,10 @@ const MainChat = () => {
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
+
+  const socket = useSocketStore((state) => {
+    return state.socket;
+  });
 
   const handleGetFriendProfile = async () => {
     const friendId = params?.id[0];
@@ -50,6 +61,7 @@ const MainChat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Check screen height
   useEffect(() => {
     const handleResize = () => {
       setScreenHeight(window.innerHeight);
@@ -66,6 +78,7 @@ const MainChat = () => {
     }
   }, []);
 
+  // Check chat box overflow
   useEffect(() => {
     if (
       chatBoxRef?.current?.clientHeight &&
@@ -76,7 +89,7 @@ const MainChat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatBoxRef?.current?.clientHeight]);
 
-  // components/MessageList.tsx
+  // Chat auto scroll effect
   useEffect(() => {
     if (messages !== undefined) {
       if (messages?.length) {
@@ -97,10 +110,34 @@ const MainChat = () => {
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (formData?.message === "") {
+      toast.error("Message can not be empty");
+      return;
+    }
+
+    if (!friend) {
+      toast.error("Friend not found");
+      return;
+    }
+
     const newChat: DirectMessageChatType = {
       user: session?.user,
-      text: formData.message,
+      text: formData?.message,
     };
+
+    if (socket && session?.user?.id && formData?.message !== "") {
+      socket.emit(
+        "send_direct_message",
+        {
+          userId: session?.user?.id,
+          friendId: friend?.id,
+          text: formData.message,
+        },
+        (res: { message: string; friend: UserType }) => {
+          console.log("Check send direct message:", res);
+        }
+      );
+    }
 
     setMesages([...messages, newChat]);
 
@@ -155,11 +192,49 @@ const MainChat = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col text-[13px]">
-                    <p className="font-bold">{message?.user?.name}</p>
+                    <div className="flex items-center gap-3">
+                      <p className="font-bold">{`${message?.user?.name} ${
+                        session?.user?.id === message?.user?.id ? "(You)" : ""
+                      }`}</p>
+                      <p className="text-[12px] text-zinc-400">
+                        {message?.sended
+                          ? formatDateStr(message?.sended)
+                          : "undefined"}
+                      </p>
+                    </div>
                     <p>{message.text}</p>
                   </div>
                 </div>
-                <div></div>
+                <div
+                  className="hidden absolute top-[-15px] right-[15px] group-hover:flex items-center gap-3 px-2 py-1 rounded-md
+                              text-gray-700 dark:text-white border border-zin-600 dark:border-primary-gray
+                              bg-zinc-200 dark:bg-zinc-700"
+                >
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="hover:text-primary-purple">
+                          <MdEmojiEmotions size={25} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Add reaction</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="hover:text-red-500">
+                          <FaRegTrashAlt size={20} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Delete message</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <div ref={mainRef} />
               </div>
             );

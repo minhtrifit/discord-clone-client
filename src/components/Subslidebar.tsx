@@ -12,11 +12,11 @@ import {
 } from "@/lib/action.api";
 import { getSummaryName } from "@/lib/helper";
 
-import { UserType } from "@/types";
+import { DirectMessageChatType, UserType } from "@/types";
 
 import { GrUser } from "react-icons/gr";
 import { BsSpeedometer } from "react-icons/bs";
-import { CiShop } from "react-icons/ci";
+import { AiOutlineShop } from "react-icons/ai";
 import { IoMdAdd } from "react-icons/io";
 import { MdClear } from "react-icons/md";
 
@@ -48,7 +48,7 @@ const Subslidebar = () => {
     {
       name: "Shop",
       url: "/dashboard/shop",
-      icon: <CiShop size={25} />,
+      icon: <AiOutlineShop size={25} />,
     },
   ];
 
@@ -126,13 +126,45 @@ const Subslidebar = () => {
   useEffect(() => {
     if (socket) {
       socket.on("new_friend", (rs: { message: string; user: UserType }) => {
-        console.log("Get friend request:", rs);
+        // console.log("Get friend request:", rs);
         if (rs?.message === "You have a new friend") {
           toast.info(`You and ${rs?.user?.email} just become a friend`);
 
           if (session?.user?.email) handleGetFriendsFromDB();
         }
       });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  // Receive direct message
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "receive_direct_message",
+        (rs: {
+          message: string;
+          user: UserType;
+          chat: DirectMessageChatType;
+        }) => {
+          // console.log("Receive direct message request:", rs);
+          if (rs?.message === "You have new direct message" && rs?.user) {
+            const newDirectMessage = directMessages;
+            newDirectMessage.push(rs?.user);
+
+            const uniqueObjects = newDirectMessage?.filter(
+              (item, index, self) => {
+                return (
+                  self.findIndex((obj) => obj.email === item.email) === index
+                );
+              }
+            );
+
+            updateDirectMessages(uniqueObjects);
+          }
+        }
+      );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -146,7 +178,7 @@ const Subslidebar = () => {
         "delete_direct_message",
         { ownerEmail: session?.user?.email, friendEmail: friendEmail },
         (res: { message: string; friend: UserType }) => {
-          console.log("Check delete direct message:", res);
+          // console.log("Check delete direct message:", res);
           if (
             res.message === "Delete direct message, successfully" &&
             res?.friend
@@ -183,12 +215,12 @@ const Subslidebar = () => {
             <Link key={item.name} href={item.url}>
               <div
                 className={`px-2 py-3 rounded-md text-[14px] flex items-center gap-5
-                            text-gray-600 hover:bg-zinc-300 hover:text-primary-black
+                            text-zinc-500 hover:bg-zinc-300 hover:text-primary-black
                             dark:text-gray-400 dark:hover:bg-zinc-700 dark:hover:text-white ${
                               category !== undefined &&
                               !category.includes("/messages") &&
                               category?.includes(item.name.toLowerCase()) &&
-                              "bg-primary-white text-primary-gray dark:bg-secondary-gray dark:text-white"
+                              "font-semibold text-zinc-900 dark:text-white bg-primary-white dark:bg-secondary-gray"
                             }`}
               >
                 {item.icon}
@@ -222,11 +254,14 @@ const Subslidebar = () => {
             return (
               <div
                 key={user?.id}
-                className={`flex items-center justify-between pl-2 pr-4 py-2 rounded-md
-                hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:cursor-pointer
+                className={`group flex items-center justify-between pl-2 pr-4 py-2 rounded-md
+                font-semibold hover:text-zinc-900 hover:bg-zinc-300 hover:dark:bg-zinc-700
+                hover:text-zinc-900 dark:hover:text-white
+                hover:cursor-pointer
                 ${
-                  getDirectMessageId(user?.id) &&
-                  "bg-primary-white dark:bg-secondary-gray"
+                  getDirectMessageId(user?.id)
+                    ? "text-zinc-900 dark:text-white bg-primary-white dark:bg-secondary-gray"
+                    : "text-zinc-500 dark:text-zinc-500"
                 }`}
               >
                 <Link href={`/dashboard/friends/messages/${user?.id}`}>
@@ -240,13 +275,20 @@ const Subslidebar = () => {
                         {user?.name && getSummaryName(user?.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="dark:text-white text-[13px] max-w-[200px]">
+                    <p
+                      className={`text-[13px] font-semibold max-w-[200px]
+                        group-hover:text-zinc-900 group-hover:dark:text-white ${
+                          getDirectMessageId(user?.id)
+                            ? "text-zinc-900 dark:text-white"
+                            : "text-zinc-500 dark:text-gray-400"
+                        }`}
+                    >
                       {user?.name}
                     </p>
                   </div>
                 </Link>
                 <div
-                  className="hover:text-white"
+                  className="hover:text-white dark:hover:text-zinc-500"
                   onClick={() => {
                     handleDeleteDirectMessage(user?.email);
                   }}
