@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { Socket } from "socket.io-client";
 
-import { UserType } from "@/types";
+import { DirectMessageChatType, UserType } from "@/types";
 
 interface SocketState {
   socket: Socket | null;
@@ -18,6 +18,7 @@ interface FriendState {
   onlines: UserType[];
   loading: boolean;
   directMessages: UserType[];
+  chats: DirectMessageChatType[];
   setPendings: (user: UserType) => void;
   updatePendings: (newPendings: UserType[]) => void;
   updateFriends: (newFriends: UserType[]) => void;
@@ -28,6 +29,8 @@ interface FriendState {
   setDirectMessages: (newFriend: UserType) => void;
   updateDirectMessages: (newDirectMessages: UserType[]) => void;
   filterDirectMessages: (newFriend: UserType) => void;
+  setChats: (chat: DirectMessageChatType) => void;
+  updateChats: (newChats: DirectMessageChatType[]) => void;
 }
 
 export const useSocketStore = create<SocketState>()(
@@ -47,6 +50,7 @@ export const useFriendStore = create<FriendState>()(
     onlines: [],
     loading: false,
     directMessages: [],
+    chats: [],
     setPendings: (user: UserType) =>
       set((state) => ({ pendings: [...state.pendings, user] })),
     updatePendings: (newPendings: UserType[]) =>
@@ -74,5 +78,9 @@ export const useFriendStore = create<FriendState>()(
           return u.email !== user.email;
         }),
       })),
+    setChats: (chat: DirectMessageChatType) =>
+      set((state) => ({ chats: [...state.chats, chat] })),
+    updateChats: (newChats: DirectMessageChatType[]) =>
+      set(() => ({ chats: newChats })),
   }))
 );

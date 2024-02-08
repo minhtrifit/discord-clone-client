@@ -146,6 +146,7 @@ const Subslidebar = () => {
         (rs: {
           message: string;
           user: UserType;
+          friend: UserType;
           chat: DirectMessageChatType;
         }) => {
           // console.log("Receive direct message request:", rs);

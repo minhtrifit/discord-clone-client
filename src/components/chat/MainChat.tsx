@@ -1,29 +1,24 @@
 "use client";
 
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useSocketStore } from "@/lib/store";
+import { useFriendStore, useSocketStore } from "@/lib/store";
 
 import { DirectMessageChatType, UserType } from "@/types";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import { toast } from "react-toastify";
+import TextChat from "./TextChat";
 
 import { IoSend } from "react-icons/io5";
 import { FaFile } from "react-icons/fa6";
 import { MdEmojiEmotions } from "react-icons/md";
-import { FaRegTrashAlt } from "react-icons/fa";
 
-import { getUserById } from "@/lib/action.api";
-import { getSummaryName, formatDateStr } from "@/lib/helper";
+import { getAllChatsByUserId, getUserById } from "@/lib/action.api";
+import { getSummaryName } from "@/lib/helper";
 
 // import { DirectMessageChatData } from "@/lib/utils";
 
@@ -32,7 +27,6 @@ const MainChat = () => {
   const { data: session }: any = useSession();
 
   const [friend, setFriend] = useState<UserType | null>(null);
-  const [messages, setMesages] = useState<DirectMessageChatType[]>([]);
   const [formData, setFormData] = useState<any>({
     message: "",
   });
@@ -47,6 +41,18 @@ const MainChat = () => {
     return state.socket;
   });
 
+  const chats = useFriendStore((state) => {
+    return state.chats;
+  });
+
+  const setChats = useFriendStore((state) => {
+    return state.setChats;
+  });
+
+  const updateChats = useFriendStore((state) => {
+    return state.updateChats;
+  });
+
   const handleGetFriendProfile = async () => {
     const friendId = params?.id[0];
 
@@ -56,8 +62,21 @@ const MainChat = () => {
     }
   };
 
+  const handleGetAllChats = async () => {
+    const friendId = params?.id[0];
+
+    if (session?.user?.id && friendId !== undefined) {
+      const res = await getAllChatsByUserId(session?.user?.id, friendId);
+
+      if (res?.message === "Get all direct messages successfully") {
+        updateChats(res?.chats);
+      }
+    }
+  };
+
   useEffect(() => {
     handleGetFriendProfile();
+    handleGetAllChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -91,8 +110,8 @@ const MainChat = () => {
 
   // Chat auto scroll effect
   useEffect(() => {
-    if (messages !== undefined) {
-      if (messages?.length) {
+    if (chats !== undefined) {
+      if (chats?.length) {
         containerRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "start",
@@ -105,7 +124,43 @@ const MainChat = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages?.length]);
+  }, [chats?.length]);
+
+  // Receive direct message
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "receive_direct_message",
+        (rs: {
+          message: string;
+          user: UserType;
+          friend: UserType;
+          chat: DirectMessageChatType;
+        }) => {
+          // console.log("Receive direct message request:", rs);
+          if (
+            rs?.message === "You have new direct message" &&
+            rs?.chat &&
+            rs?.user
+          ) {
+            const newChats = chats;
+            newChats.push(rs?.chat);
+
+            const uniqueObjects = newChats.filter(
+              (object, index, self) =>
+                index === self.findIndex((o) => o.id === object.id)
+            );
+
+            console.log(uniqueObjects);
+
+            updateChats(uniqueObjects);
+          }
+        }
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -120,11 +175,6 @@ const MainChat = () => {
       return;
     }
 
-    const newChat: DirectMessageChatType = {
-      user: session?.user,
-      text: formData?.message,
-    };
-
     if (socket && session?.user?.id && formData?.message !== "") {
       socket.emit(
         "send_direct_message",
@@ -133,13 +183,19 @@ const MainChat = () => {
           friendId: friend?.id,
           text: formData.message,
         },
-        (res: { message: string; friend: UserType }) => {
+        (res: {
+          message: string;
+          user: UserType;
+          friend: UserType;
+          chat: DirectMessageChatType;
+        }) => {
           console.log("Check send direct message:", res);
+          if (res?.chat) {
+            setChats(res?.chat);
+          }
         }
       );
     }
-
-    setMesages([...messages, newChat]);
 
     setFormData({
       message: "",
@@ -174,70 +230,28 @@ const MainChat = () => {
         }`}
       >
         <div ref={chatBoxRef} className="w-[100%] flex flex-col gap-8">
-          {messages?.map((message, index) => {
-            return (
-              <div
-                key={index}
-                className="group relative w-[100%] flex items-center justify-between rounded-md py-2
-                            hover:bg-secondary-white dark:hover:bg-primary-gray"
-              >
-                <div className="flex items-center gap-3">
-                  <Avatar className="w-[40px] h-[40px]">
-                    <AvatarImage
-                      src={`${message?.user?.avatar}`}
-                      alt="avatar"
-                    />
-                    <AvatarFallback>
-                      {friend?.name && getSummaryName(friend?.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col text-[13px]">
-                    <div className="flex items-center gap-3">
-                      <p className="font-bold">{`${message?.user?.name} ${
-                        session?.user?.id === message?.user?.id ? "(You)" : ""
-                      }`}</p>
-                      <p className="text-[12px] text-zinc-400">
-                        {message?.sended
-                          ? formatDateStr(message?.sended)
-                          : "undefined"}
-                      </p>
-                    </div>
-                    <p>{message.text}</p>
-                  </div>
-                </div>
-                <div
-                  className="hidden absolute top-[-15px] right-[15px] group-hover:flex items-center gap-3 px-2 py-1 rounded-md
-                              text-gray-700 dark:text-white border border-zin-600 dark:border-primary-gray
-                              bg-zinc-200 dark:bg-zinc-700"
-                >
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button className="hover:text-primary-purple">
-                          <MdEmojiEmotions size={25} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Add reaction</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button className="hover:text-red-500">
-                          <FaRegTrashAlt size={20} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Delete message</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <div ref={mainRef} />
-              </div>
-            );
+          {chats?.map((chat: DirectMessageChatType, index) => {
+            if (chat?.userId === session?.user?.id)
+              return (
+                <TextChat
+                  key={chat.id}
+                  userIdSession={session?.user?.id}
+                  chat={chat}
+                  user={session?.user}
+                  mainRef={mainRef}
+                />
+              );
+
+            if (chat?.userId === friend?.id && friend !== null)
+              return (
+                <TextChat
+                  key={chat.id}
+                  userIdSession={session?.user?.id}
+                  chat={chat}
+                  user={friend}
+                  mainRef={mainRef}
+                />
+              );
           })}
         </div>
       </div>
