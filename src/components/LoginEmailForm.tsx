@@ -5,9 +5,21 @@ import Link from "next/link";
 import { useFormState } from "react-dom";
 
 import { handleEmailLogin } from "@/lib/action";
+import { useEffect, useState } from "react";
+
+import { Button } from "@/components/ui/button";
 
 const LoginEmailForm = () => {
   const [state, formAction] = useFormState(handleEmailLogin, undefined);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<any>({
+    email: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    if (state?.error !== undefined) setLoading(false);
+  }, [state]);
 
   return (
     <form
@@ -29,6 +41,8 @@ const LoginEmailForm = () => {
           name="email"
           type="email"
           required
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -38,6 +52,10 @@ const LoginEmailForm = () => {
           name="password"
           type="password"
           required
+          value={formData.password}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
         />
       </div>
       <Link href={"/forgot-password"}>
@@ -45,9 +63,17 @@ const LoginEmailForm = () => {
           Forgot your password?
         </p>
       </Link>
-      <button className="bg-primary-purple hover:bg-secondary-purple p-2 rounded-md">
-        Log In
-      </button>
+      <Button
+        variant="purple"
+        onClick={async () => {
+          setLoading(true);
+          if (formData.email === "" || formData.password === "") {
+            setLoading(false);
+          }
+        }}
+      >
+        {loading ? "Loading..." : "Log In"}
+      </Button>
       <p className="text-red-500 text-center">{state?.error}</p>
       <div className="text-[12px] flex items-center gap-1">
         <p>Need an account?</p>

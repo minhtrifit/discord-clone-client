@@ -4,23 +4,36 @@
 
 import Link from "next/link";
 import { useFormState } from "react-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 import { handleRegister } from "@/lib/action";
 
+import { Button } from "@/components/ui/button";
+
 const RegisterForm = () => {
   const [state, formAction] = useFormState(handleRegister, undefined);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<any>({
+    email: "",
+    name: "",
+    password: "",
+  });
   const router = useRouter();
 
   useEffect(() => {
     if (state?.message === "Register account successfully") {
       toast.success(state.message);
+      setLoading(false);
       router.push("/login");
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+
+  useEffect(() => {
+    if (state?.error !== undefined) setLoading(false);
   }, [state]);
 
   return (
@@ -38,6 +51,8 @@ const RegisterForm = () => {
           name="email"
           type="email"
           required
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -47,6 +62,8 @@ const RegisterForm = () => {
           name="name"
           type="type"
           required
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -56,6 +73,10 @@ const RegisterForm = () => {
           name="password"
           type="password"
           required
+          value={formData.password}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
         />
       </div>
       <div className="flex items-center gap-3">
@@ -75,9 +96,24 @@ const RegisterForm = () => {
           </Link>
         </div>
       </div>
-      <button className="bg-primary-purple hover:bg-secondary-purple p-2 rounded-md">
+      {/* <button className="bg-primary-purple hover:bg-secondary-purple p-2 rounded-md">
         Continue
-      </button>
+      </button> */}
+      <Button
+        variant="purple"
+        onClick={async () => {
+          setLoading(true);
+          if (
+            formData.email === "" ||
+            formData.name === "" ||
+            formData.password === ""
+          ) {
+            setLoading(false);
+          }
+        }}
+      >
+        {loading ? "Loading..." : "Continue"}
+      </Button>
       <div className="text-[12px] flex flex-wrap items-center gap-1 text-gray-400">
         <p>By registering, you agree to Discord's</p>
         <Link href={"https://discord.com/terms"}>
