@@ -55,7 +55,7 @@ const FriendProfileSlidebar = () => {
                 src={`${friend?.avatar ? friend?.avatar : ""}`}
                 alt="avatar"
               />
-              <AvatarFallback>
+              <AvatarFallback className="text-[30px]">
                 {friend?.name && getSummaryName(friend?.name)}
               </AvatarFallback>
             </Avatar>

@@ -19,6 +19,7 @@ interface FriendState {
   loading: boolean;
   directMessages: UserType[];
   chats: DirectMessageChatType[];
+  userProfileToggle: boolean;
   setPendings: (user: UserType) => void;
   updatePendings: (newPendings: UserType[]) => void;
   updateFriends: (newFriends: UserType[]) => void;
@@ -31,6 +32,7 @@ interface FriendState {
   filterDirectMessages: (newFriend: UserType) => void;
   setChats: (chat: DirectMessageChatType) => void;
   updateChats: (newChats: DirectMessageChatType[]) => void;
+  setUserProfileToggle: () => void;
 }
 
 export const useSocketStore = create<SocketState>()(
@@ -48,9 +50,10 @@ export const useFriendStore = create<FriendState>()(
     pendings: [],
     friends: [],
     onlines: [],
-    loading: false,
+    loading: true,
     directMessages: [],
     chats: [],
+    userProfileToggle: false,
     setPendings: (user: UserType) =>
       set((state) => ({ pendings: [...state.pendings, user] })),
     updatePendings: (newPendings: UserType[]) =>
@@ -82,5 +85,7 @@ export const useFriendStore = create<FriendState>()(
       set((state) => ({ chats: [...state.chats, chat] })),
     updateChats: (newChats: DirectMessageChatType[]) =>
       set(() => ({ chats: newChats })),
+    setUserProfileToggle: () =>
+      set((state) => ({ userProfileToggle: !state.userProfileToggle })),
   }))
 );

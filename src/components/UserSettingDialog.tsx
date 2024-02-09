@@ -142,7 +142,7 @@ const UserSettingDialog: React.FC<ParentComponentProps> = ({ children }) => {
                         src={`${session?.user?.avatar}`}
                         alt="avatar"
                       />
-                      <AvatarFallback>
+                      <AvatarFallback className="text-[40px]">
                         {session?.user?.name &&
                           getSummaryName(session?.user?.name)}
                       </AvatarFallback>

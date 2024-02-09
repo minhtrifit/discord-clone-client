@@ -9,26 +9,34 @@ import { v4 as uuidv4 } from "uuid";
 import { DirectMessageChatType, UserType } from "@/types";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-
-import { toast } from "react-toastify";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import TextChat from "./TextChat";
+import ChatInput from "./ChatInput";
 
-import { IoSend } from "react-icons/io5";
-import { FaFile } from "react-icons/fa6";
-import { MdEmojiEmotions } from "react-icons/md";
+import { PiPhoneCallFill } from "react-icons/pi";
+import { FaCircleUser } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
 import { getAllChatsByUserId, getUserById } from "@/lib/action.api";
-import { getSummaryName } from "@/lib/helper";
+import { formatDateStr, getSummaryName } from "@/lib/helper";
 
 // import { DirectMessageChatData } from "@/lib/utils";
+
+export interface FormDataState {
+  message: string;
+}
 
 const MainChat = () => {
   const params = useParams();
   const { data: session }: any = useSession();
 
   const [friend, setFriend] = useState<UserType | null>(null);
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<FormDataState>({
     message: "",
   });
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
@@ -52,6 +60,14 @@ const MainChat = () => {
 
   const updateChats = useFriendStore((state) => {
     return state.updateChats;
+  });
+
+  const userProfileToggle = useFriendStore((state) => {
+    return state.userProfileToggle;
+  });
+
+  const setUserProfileToggle = useFriendStore((state) => {
+    return state.setUserProfileToggle;
   });
 
   const handleGetFriendProfile = async () => {
@@ -233,7 +249,33 @@ const MainChat = () => {
             {friend?.name}
           </p>
         </div>
-        <div></div>
+        <div className="flex items-center gap-5">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button>
+                  <PiPhoneCallFill size={25} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Start call</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button onClick={setUserProfileToggle}>
+                  <FaCircleUser size={25} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{userProfileToggle ? "Hide" : "Show"} user profile</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
       <div
         className={`w-[100%] max-h-[calc(100vh-156px)] h-[calc(100vh-156px)] overflow-y-auto flex px-6 py-4 ${
@@ -241,8 +283,43 @@ const MainChat = () => {
         }`}
       >
         <div ref={chatBoxRef} className="w-[100%] flex flex-col gap-8">
-          {chats?.map((chat: DirectMessageChatType, index) => {
-            if (friend !== null)
+          {friend !== null && (
+            <div className="flex flex-col gap-3">
+              <Avatar className="w-[70px] h-[70px]">
+                <AvatarImage src={`${friend?.avatar}`} alt="avatar" />
+                <AvatarFallback>
+                  {friend?.name && getSummaryName(friend?.name)}
+                </AvatarFallback>
+              </Avatar>
+              <p className="font-bold text-xl">{friend?.name}</p>
+              <p className="font-semibold text-sm">{friend?.email}</p>
+              <p className="text-[13px] text-zinc-500 dark:text-zinc-400">
+                This is the beginning of your direct message history with{" "}
+                {friend?.name}
+              </p>
+              <div className="relative w-[100%] h-[1px] bg-primary-white dark:bg-zinc-400 my-5">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-[13px] text-zinc-500 dark:text-zinc-400 bg-white dark:bg-secondary-gray p-1">
+                    {chats?.length !== 0 &&
+                      chats[0]?.sended !== undefined &&
+                      formatDateStr(chats[0]?.sended)}
+                    {chats?.length === 0 &&
+                      formatDateStr(new Date().toString())}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {chats?.map((chat: DirectMessageChatType) => {
+            if (friend === null) {
+              return (
+                <div key={uuidv4()}>
+                  <p>Chat is not available</p>
+                </div>
+              );
+            }
+
+            if (friend !== null && chat?.provider === "text") {
               return (
                 <TextChat
                   key={uuidv4()}
@@ -254,35 +331,17 @@ const MainChat = () => {
                   mainRef={mainRef}
                 />
               );
+            }
           })}
         </div>
       </div>
       <div className="absolute w-[100%] h-[100px] bottom-0 px-6 py-4">
-        <form className="relative" onSubmit={handleSendMessage}>
-          <Input
-            className="h-[50px] pr-[100px]"
-            type="text"
-            placeholder={`Message @${friend?.name}`}
-            value={formData.message}
-            onChange={(e) => {
-              setFormData({ ...formData, message: e.target.value });
-            }}
-          />
-          <div className="absolute top-[15px] right-[20px] flex items-center gap-3">
-            <button
-              type="submit"
-              className="text-primary-purple hover:text-secondary-purple hover:cursor-pointer"
-            >
-              <IoSend size={20} />
-            </button>
-            <div className="text-primary-purple hover:text-secondary-purple hover:cursor-pointer">
-              <FaFile size={20} />
-            </div>
-            <div className="text-primary-purple hover:text-secondary-purple hover:cursor-pointer">
-              <MdEmojiEmotions size={25} />
-            </div>
-          </div>
-        </form>
+        <ChatInput
+          friendName={friend?.name ? friend?.name : "undefined"}
+          handleSendMessage={handleSendMessage}
+          formData={formData}
+          setFormData={setFormData}
+        />
       </div>
     </div>
   );
