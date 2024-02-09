@@ -143,6 +143,10 @@ const MainChat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chats?.length]);
 
+  useEffect(() => {
+    mainRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chats]);
+
   // Receive direct message
   useEffect(() => {
     if (socket) {
@@ -230,10 +234,7 @@ const MainChat = () => {
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-[100%] h-screen flex flex-col"
-    >
+    <div className="relative w-[100%] h-screen flex flex-col">
       <div
         className="w-[100%] h-[56px] px-6 border border-l-0 border-r-0 border-t-0 border-b-primary-black
                         flex items-center justify-between"
@@ -278,6 +279,7 @@ const MainChat = () => {
         </div>
       </div>
       <div
+        ref={containerRef}
         className={`w-[100%] max-h-[calc(100vh-156px)] h-[calc(100vh-156px)] overflow-y-auto flex px-6 py-4 ${
           !isOverFlow && "items-end"
         }`}
