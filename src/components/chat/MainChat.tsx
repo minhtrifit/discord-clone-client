@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
+import { v4 as uuidv4 } from "uuid";
 
 import { DirectMessageChatType, UserType } from "@/types";
 
@@ -143,17 +144,25 @@ const MainChat = () => {
             rs?.chat &&
             rs?.user
           ) {
-            const newChats = chats;
-            newChats.push(rs?.chat);
-
-            const uniqueObjects = newChats.filter(
-              (object, index, self) =>
-                index === self.findIndex((o) => o.id === object.id)
+            socket.emit(
+              "get_all_chats",
+              {
+                userId: session?.user?.id,
+                friendId: friend?.id,
+              },
+              (res: {
+                message: string;
+                user: UserType;
+                friend: UserType;
+                chats: DirectMessageChatType[];
+              }) => {
+                // console.log("Check get all chats:", res);
+                if (res?.chats) {
+                  // console.log(res?.chats);
+                  updateChats(res?.chats);
+                }
+              }
             );
-
-            console.log(uniqueObjects);
-
-            updateChats(uniqueObjects);
           }
         }
       );
@@ -189,8 +198,9 @@ const MainChat = () => {
           friend: UserType;
           chat: DirectMessageChatType;
         }) => {
-          console.log("Check send direct message:", res);
+          // console.log("Check send direct message:", res);
           if (res?.chat) {
+            // console.log("SEND CHAT", res?.chat);
             setChats(res?.chat);
           }
         }
@@ -231,24 +241,15 @@ const MainChat = () => {
       >
         <div ref={chatBoxRef} className="w-[100%] flex flex-col gap-8">
           {chats?.map((chat: DirectMessageChatType, index) => {
-            if (chat?.userId === session?.user?.id)
+            if (friend !== null)
               return (
                 <TextChat
-                  key={chat.id}
+                  key={uuidv4()}
                   userIdSession={session?.user?.id}
                   chat={chat}
-                  user={session?.user}
-                  mainRef={mainRef}
-                />
-              );
-
-            if (chat?.userId === friend?.id && friend !== null)
-              return (
-                <TextChat
-                  key={chat.id}
-                  userIdSession={session?.user?.id}
-                  chat={chat}
-                  user={friend}
+                  user={
+                    chat?.userId === session?.user?.id ? session?.user : friend
+                  }
                   mainRef={mainRef}
                 />
               );
