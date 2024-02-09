@@ -1,3 +1,6 @@
+import { useFriendStore, useSocketStore } from "@/lib/store";
+import { useSession } from "next-auth/react";
+
 import {
   Tooltip,
   TooltipContent,
@@ -6,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 import { DirectMessageChatType, UserType } from "@/types";
 
@@ -18,11 +22,63 @@ interface PropType {
   userIdSession: string;
   user: UserType;
   chat: DirectMessageChatType;
+  friend?: UserType;
   mainRef: React.RefObject<HTMLDivElement>;
 }
 
 const TextChat = (props: PropType) => {
-  const { userIdSession, user, chat, mainRef } = props;
+  const { userIdSession, user, chat, friend, mainRef } = props;
+
+  const { data: session }: any = useSession();
+
+  const socket = useSocketStore((state) => {
+    return state.socket;
+  });
+
+  const updateChats = useFriendStore((state) => {
+    return state.updateChats;
+  });
+
+  const handleDeleteChatById = (chatId: string) => {
+    if (
+      confirm("Do you want to delete this chat?") == true &&
+      socket &&
+      session?.user &&
+      friend
+    ) {
+      socket.emit(
+        "delete_chat_by_id",
+        {
+          chatId: chatId,
+          userId: session?.user?.id,
+          friendId: friend?.id,
+        },
+        (res: { message: string; status: boolean }) => {
+          // console.log("Check delete chat by id:", res);
+          if (res?.status === true) {
+            toast.success(res?.message);
+            socket.emit(
+              "get_all_chats",
+              {
+                userId: session?.user?.id,
+                friendId: friend?.id,
+              },
+              (res: {
+                message: string;
+                user: UserType;
+                friend: UserType;
+                chats: DirectMessageChatType[];
+              }) => {
+                if (res?.chats) {
+                  updateChats(res?.chats);
+                }
+              }
+            );
+          } else toast.error(res?.message);
+        }
+      );
+    }
+  };
 
   return (
     <div
@@ -86,7 +142,13 @@ const TextChat = (props: PropType) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="hover:text-red-500">
+              <button
+                className="hover:text-red-500"
+                onClick={() => {
+                  if (chat?.id) handleDeleteChatById(chat?.id);
+                  else toast.error("Something wrong");
+                }}
+              >
                 <FaRegTrashAlt size={20} />
               </button>
             </TooltipTrigger>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
 import { v4 as uuidv4 } from "uuid";
@@ -33,6 +33,7 @@ export interface FormDataState {
 
 const MainChat = () => {
   const params = useParams();
+  const pathName = usePathname();
   const { data: session }: any = useSession();
 
   const [friend, setFriend] = useState<UserType | null>(null);
@@ -191,6 +192,67 @@ const MainChat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
+  // Get direct chat delete
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "get_chat_delete",
+        (rs: {
+          message: string;
+          status: boolean;
+          userId: string;
+          friendId: string;
+        }) => {
+          // Update new chat with all user client
+          if (rs?.status === true && session?.user?.id === rs?.userId) {
+            socket.emit(
+              "get_all_chats",
+              {
+                userId: session?.user?.id,
+                friendId: friend?.id,
+              },
+              (res: {
+                message: string;
+                user: UserType;
+                friend: UserType;
+                chats: DirectMessageChatType[];
+              }) => {
+                if (res?.chats) {
+                  updateChats(res?.chats);
+                }
+              }
+            );
+          }
+
+          // Send notification with friend client
+          if (rs?.status === true && session?.user?.id === rs?.friendId) {
+            const friendId = params?.id[0];
+
+            socket.emit(
+              "get_all_chats",
+              {
+                userId: session?.user?.id,
+                friendId: friendId,
+              },
+              (res: {
+                message: string;
+                user: UserType;
+                friend: UserType;
+                chats: DirectMessageChatType[];
+              }) => {
+                if (res?.chats) updateChats(res?.chats);
+
+                if (res?.chats && friendId === res?.friend?.id)
+                  toast.info(rs?.message);
+              }
+            );
+          }
+        }
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, pathName]);
+
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -326,10 +388,11 @@ const MainChat = () => {
                 <TextChat
                   key={uuidv4()}
                   userIdSession={session?.user?.id}
-                  chat={chat}
                   user={
                     chat?.userId === session?.user?.id ? session?.user : friend
                   }
+                  chat={chat}
+                  friend={friend}
                   mainRef={mainRef}
                 />
               );
