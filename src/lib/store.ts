@@ -50,10 +50,10 @@ export const useFriendStore = create<FriendState>()(
     pendings: [],
     friends: [],
     onlines: [],
-    loading: true,
+    loading: false,
     directMessages: [],
     chats: [],
-    userProfileToggle: false,
+    userProfileToggle: true,
     setPendings: (user: UserType) =>
       set((state) => ({ pendings: [...state.pendings, user] })),
     updatePendings: (newPendings: UserType[]) =>

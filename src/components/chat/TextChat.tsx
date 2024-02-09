@@ -5,6 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 
 import { DirectMessageChatType, UserType } from "@/types";
 
@@ -29,12 +30,30 @@ const TextChat = (props: PropType) => {
               hover:bg-secondary-white dark:hover:bg-primary-gray"
     >
       <div className="flex items-center gap-3">
-        <Avatar className="w-[40px] h-[40px]">
+        {/* <Avatar className="w-[40px] h-[40px]">
           <AvatarImage src={`${user?.avatar}`} alt="avatar" />
           <AvatarFallback>
             {user?.name && getSummaryName(user?.name)}
           </AvatarFallback>
-        </Avatar>
+        </Avatar> */}
+        {user?.avatar && user?.avatar !== null && (
+          <div>
+            <Image
+              className="rounded-full"
+              src={user?.avatar}
+              width={40}
+              height={40}
+              alt="avatar"
+            />
+          </div>
+        )}
+        {user?.avatar === null && (
+          <Avatar className="w-[40px] h-[40px]">
+            <AvatarFallback>
+              {user?.name && getSummaryName(user?.name)}
+            </AvatarFallback>
+          </Avatar>
+        )}
         <div className="flex flex-col text-[13px]">
           <div className="flex items-center gap-3">
             <p className="font-bold">{`${user?.name} ${
