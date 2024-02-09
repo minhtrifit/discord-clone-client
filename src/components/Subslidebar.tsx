@@ -151,18 +151,33 @@ const Subslidebar = () => {
         }) => {
           // console.log("Receive direct message request:", rs);
           if (rs?.message === "You have new direct message" && rs?.user) {
-            const newDirectMessage = directMessages;
-            newDirectMessage.push(rs?.user);
+            // const newDirectMessage = directMessages;
+            // newDirectMessage.push(rs?.user);
 
-            const uniqueObjects = newDirectMessage?.filter(
-              (item, index, self) => {
-                return (
-                  self.findIndex((obj) => obj.email === item.email) === index
-                );
+            // const uniqueObjects = newDirectMessage?.filter(
+            //   (item, index, self) => {
+            //     return (
+            //       self.findIndex((obj) => obj.email === item.email) === index
+            //     );
+            //   }
+            // );
+
+            // updateDirectMessages(uniqueObjects);
+
+            socket.emit(
+              "get_direct_messages",
+              {
+                email: session?.user?.email,
+                prevFriend: rs?.user,
+              },
+              (res: { message: string; friends: UserType[] }) => {
+                // console.log("Check get all direct messages:", res);
+                if (res?.friends) {
+                  // console.log(res?.friends);
+                  updateDirectMessages(res?.friends);
+                }
               }
             );
-
-            updateDirectMessages(uniqueObjects);
           }
         }
       );

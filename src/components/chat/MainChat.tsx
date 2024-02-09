@@ -190,6 +190,7 @@ const MainChat = () => {
         {
           userId: session?.user?.id,
           friendId: friend?.id,
+          provider: "text",
           text: formData.message,
         },
         (res: {
