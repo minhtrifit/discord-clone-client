@@ -10,11 +10,10 @@ import { toast } from "react-toastify";
 
 import { handleRegister } from "@/lib/action";
 
-import { Button } from "@/components/ui/button";
+import ActionFormBtn from "./ActionFormBtn";
 
 const RegisterForm = () => {
   const [state, formAction] = useFormState(handleRegister, undefined);
-  const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<any>({
     email: "",
     name: "",
@@ -25,15 +24,10 @@ const RegisterForm = () => {
   useEffect(() => {
     if (state?.message === "Register account successfully") {
       toast.success(state.message);
-      setLoading(false);
       router.push("/login");
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
-
-  useEffect(() => {
-    if (state?.error !== undefined) setLoading(false);
   }, [state]);
 
   return (
@@ -96,24 +90,7 @@ const RegisterForm = () => {
           </Link>
         </div>
       </div>
-      {/* <button className="bg-primary-purple hover:bg-secondary-purple p-2 rounded-md">
-        Continue
-      </button> */}
-      <Button
-        variant="purple"
-        onClick={async () => {
-          setLoading(true);
-          if (
-            formData.email === "" ||
-            formData.name === "" ||
-            formData.password === ""
-          ) {
-            setLoading(false);
-          }
-        }}
-      >
-        {loading ? "Loading..." : "Continue"}
-      </Button>
+      <ActionFormBtn defaultText={"Continue"} />
       <div className="text-[12px] flex flex-wrap items-center gap-1 text-gray-400">
         <p>By registering, you agree to Discord's</p>
         <Link href={"https://discord.com/terms"}>

@@ -5,21 +5,21 @@ import Link from "next/link";
 import { useFormState } from "react-dom";
 
 import { handleEmailLogin } from "@/lib/action";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import ActionFormBtn from "./ActionFormBtn";
+
+interface FormDataState {
+  email: string;
+  password: string;
+}
 
 const LoginEmailForm = () => {
   const [state, formAction] = useFormState(handleEmailLogin, undefined);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<FormDataState>({
     email: "",
     password: "",
   });
-
-  useEffect(() => {
-    if (state?.error !== undefined) setLoading(false);
-  }, [state]);
 
   return (
     <form
@@ -63,17 +63,7 @@ const LoginEmailForm = () => {
           Forgot your password?
         </p>
       </Link>
-      <Button
-        variant="purple"
-        onClick={async () => {
-          setLoading(true);
-          if (formData.email === "" || formData.password === "") {
-            setLoading(false);
-          }
-        }}
-      >
-        {loading ? "Loading..." : "Log In"}
-      </Button>
+      <ActionFormBtn defaultText={"Log In"} />
       <p className="text-red-500 text-center">{state?.error}</p>
       <div className="text-[12px] flex items-center gap-1">
         <p>Need an account?</p>
