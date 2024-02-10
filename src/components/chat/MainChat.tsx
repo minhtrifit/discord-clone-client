@@ -42,6 +42,8 @@ const MainChat = () => {
   });
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [isOverFlow, setIsOverFlow] = useState<boolean>(false);
+  const [noti, setNoti] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -203,6 +205,13 @@ const MainChat = () => {
           userId: string;
           friendId: string;
         }) => {
+          // Send notification with friend client
+          if (session?.user?.id === rs?.friendId && rs?.status === true) {
+            // toast.warn(rs?.message);
+            setMessage(rs?.message);
+            setNoti(true);
+          }
+
           // Update new chat with all user client
           if (rs?.status === true && session?.user?.id === rs?.userId) {
             socket.emit(
@@ -217,14 +226,12 @@ const MainChat = () => {
                 friend: UserType;
                 chats: DirectMessageChatType[];
               }) => {
-                if (res?.chats) {
-                  updateChats(res?.chats);
-                }
+                if (res?.chats) updateChats(res?.chats);
               }
             );
           }
 
-          // Send notification with friend client
+          // Update new chat with all friend client
           if (rs?.status === true && session?.user?.id === rs?.friendId) {
             const friendId = params?.id[0];
 
@@ -241,9 +248,6 @@ const MainChat = () => {
                 chats: DirectMessageChatType[];
               }) => {
                 if (res?.chats) updateChats(res?.chats);
-
-                if (res?.chats && friendId === res?.friend?.id)
-                  toast.info(rs?.message);
               }
             );
           }
@@ -252,6 +256,15 @@ const MainChat = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, pathName]);
+
+  useEffect(() => {
+    if (noti) {
+      toast.warn(message);
+      setMessage("");
+      setNoti(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noti]);
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
