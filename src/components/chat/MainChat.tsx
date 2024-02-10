@@ -364,7 +364,7 @@ const MainChat = () => {
             <div className="flex flex-col gap-3">
               <Avatar className="w-[70px] h-[70px]">
                 <AvatarImage src={`${friend?.avatar}`} alt="avatar" />
-                <AvatarFallback>
+                <AvatarFallback className="text-[30px]">
                   {friend?.name && getSummaryName(friend?.name)}
                 </AvatarFallback>
               </Avatar>
