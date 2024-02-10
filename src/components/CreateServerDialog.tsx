@@ -23,9 +23,10 @@ import { handleFileUpload } from "@/lib/supabase";
 import { ServerType } from "@/types";
 import { Session } from "next-auth";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { IoAdd } from "react-icons/io5";
+import { MdClear } from "react-icons/md";
 import { toast } from "react-toastify";
 
 interface PropType {
@@ -42,6 +43,7 @@ const CreateServerDialog = (props: PropType) => {
   const [serverName, setServerName] = useState<string>("");
   const [image, setImage] = useState<any>(null);
   const [imageName, setImageName] = useState<string>("");
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleImageSelection = (event: any) => {
@@ -52,6 +54,9 @@ const CreateServerDialog = (props: PropType) => {
   const handleResetImage = () => {
     setImage(null);
     setImageName("");
+    if (imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
   };
 
   const handleCreateNewServer = async () => {
@@ -96,9 +101,8 @@ const CreateServerDialog = (props: PropType) => {
 
     // Reset form
     setServerName("");
-    setImage(null);
-    setImageName("");
     setOpen(false);
+    handleResetImage();
   };
 
   return (
@@ -152,6 +156,7 @@ const CreateServerDialog = (props: PropType) => {
               </svg>
               Upload file
               <input
+                ref={imageInputRef}
                 type="file"
                 id="uploadFile1"
                 className="hidden"
@@ -162,10 +167,18 @@ const CreateServerDialog = (props: PropType) => {
               </p>
             </label>
           </div>
-          <div className="flex justify-center mb-5">
+          <div className="flex items-center justify-center gap-3 mb-5">
             <p className="text-[14px] text-white">
               {imageName !== "" ? imageName : "Not image selected"}
             </p>
+            {imageName !== "" && (
+              <button
+                className="text-primary-purple hover:text-secondary-purple"
+                onClick={handleResetImage}
+              >
+                <MdClear size={20} />
+              </button>
+            )}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">

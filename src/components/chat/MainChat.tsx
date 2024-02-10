@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useParams, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import TextChat from "./TextChat";
 import ChatInput from "./ChatInput";
+import ImageChat from "./ImageChat";
 
 import { PiPhoneCallFill } from "react-icons/pi";
 import { FaCircleUser } from "react-icons/fa6";
@@ -24,6 +25,7 @@ import { toast } from "react-toastify";
 
 import { getAllChatsByUserId, getUserById } from "@/lib/action.api";
 import { formatDateStr, getSummaryName } from "@/lib/helper";
+import { handleFileUpload } from "@/lib/supabase";
 
 // import { DirectMessageChatData } from "@/lib/utils";
 
@@ -44,6 +46,10 @@ const MainChat = () => {
   const [isOverFlow, setIsOverFlow] = useState<boolean>(false);
   const [noti, setNoti] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -149,6 +155,10 @@ const MainChat = () => {
   useEffect(() => {
     mainRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chats]);
+
+  useEffect(() => {
+    mainRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [loading]);
 
   // Receive direct message
   useEffect(() => {
@@ -308,6 +318,116 @@ const MainChat = () => {
     });
   };
 
+  const handleDeleteChatById = (chatId: string) => {
+    if (
+      confirm("Do you want to delete this chat?") == true &&
+      socket &&
+      session?.user &&
+      friend
+    ) {
+      socket.emit(
+        "delete_chat_by_id",
+        {
+          chatId: chatId,
+          userId: session?.user?.id,
+          friendId: friend?.id,
+        },
+        (res: { message: string; status: boolean }) => {
+          // console.log("Check delete chat by id:", res);
+          if (res?.status === true) {
+            toast.success(res?.message);
+            socket.emit(
+              "get_all_chats",
+              {
+                userId: session?.user?.id,
+                friendId: friend?.id,
+              },
+              (res: {
+                message: string;
+                user: UserType;
+                friend: UserType;
+                chats: DirectMessageChatType[];
+              }) => {
+                if (res?.chats) {
+                  updateChats(res?.chats);
+                }
+              }
+            );
+          } else toast.error(res?.message);
+        }
+      );
+    }
+  };
+
+  // Direct file message selection
+  const handleResetImage = () => {
+    setFile(null);
+    setFileName("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleFileSelection = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files !== null) {
+      setFile(e.target.files[0]);
+      setFileName(e.target.files[0]?.name);
+    }
+  };
+
+  const handleSendFileMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Update image
+    const type = file?.type?.split("/")[0];
+
+    if (fileName !== "" && type !== "image")
+      toast.error("Please upload image file");
+    else if (fileName !== "" && type === "image") {
+      setLoading(true);
+      let image = null;
+
+      const res = await handleFileUpload("uploads", "images", file);
+      const { fullPath }: any = res;
+
+      if (res === null) {
+        toast.error("Upload image failed");
+        return;
+      }
+
+      // Create image url
+      image = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${fullPath}`;
+
+      // Create new image chat
+      if (socket && session?.user?.id) {
+        socket.emit(
+          "send_direct_message",
+          {
+            userId: session?.user?.id,
+            friendId: friend?.id,
+            provider: "image",
+            url: image,
+          },
+          (res: {
+            message: string;
+            user: UserType;
+            friend: UserType;
+            chat: DirectMessageChatType;
+          }) => {
+            // console.log("Check send direct message:", res);
+            if (res?.chat) {
+              // console.log("SEND CHAT", res?.chat);
+              setChats(res?.chat);
+            }
+          }
+        );
+      }
+    }
+
+    setLoading(false);
+    handleResetImage();
+  };
+
   return (
     <div className="relative w-[100%] h-screen flex flex-col">
       <div
@@ -407,6 +527,23 @@ const MainChat = () => {
                   chat={chat}
                   friend={friend}
                   mainRef={mainRef}
+                  handleDeleteChatById={handleDeleteChatById}
+                />
+              );
+            }
+
+            if (friend !== null && chat?.provider === "image") {
+              return (
+                <ImageChat
+                  key={uuidv4()}
+                  userIdSession={session?.user?.id}
+                  user={
+                    chat?.userId === session?.user?.id ? session?.user : friend
+                  }
+                  chat={chat}
+                  friend={friend}
+                  mainRef={mainRef}
+                  handleDeleteChatById={handleDeleteChatById}
                 />
               );
             }
@@ -419,6 +556,13 @@ const MainChat = () => {
           handleSendMessage={handleSendMessage}
           formData={formData}
           setFormData={setFormData}
+          file={file}
+          fileName={fileName}
+          fileInputRef={fileInputRef}
+          handleResetImage={handleResetImage}
+          handleFileSelection={handleFileSelection}
+          handleSendFileMessage={handleSendFileMessage}
+          loading={loading}
         />
       </div>
     </div>

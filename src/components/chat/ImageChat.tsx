@@ -1,22 +1,19 @@
-import { useFriendStore, useSocketStore } from "@/lib/store";
-import { useSession } from "next-auth/react";
-
+import Image from "next/image";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
 import { toast } from "react-toastify";
-
-import { DirectMessageChatType, UserType } from "@/types";
 
 import { MdEmojiEmotions } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
 
-import { getSummaryName, formatDateStr } from "@/lib/helper";
+import { DirectMessageChatType, UserType } from "@/types";
+
+import { formatDateStr, getSummaryName } from "@/lib/helper";
 
 interface PropType {
   userIdSession: string;
@@ -27,32 +24,16 @@ interface PropType {
   handleDeleteChatById: (chatId: string) => void;
 }
 
-const TextChat = (props: PropType) => {
+const ImageChat = (props: PropType) => {
   const { userIdSession, user, chat, friend, mainRef, handleDeleteChatById } =
     props;
-
-  const { data: session }: any = useSession();
-
-  const socket = useSocketStore((state) => {
-    return state.socket;
-  });
-
-  const updateChats = useFriendStore((state) => {
-    return state.updateChats;
-  });
 
   return (
     <div
       className="group relative w-[100%] flex items-center justify-between rounded-md py-2
-              hover:bg-secondary-white dark:hover:bg-primary-gray"
+    hover:bg-secondary-white dark:hover:bg-primary-gray"
     >
-      <div className="flex items-center gap-3">
-        {/* <Avatar className="w-[40px] h-[40px]">
-          <AvatarImage src={`${user?.avatar}`} alt="avatar" />
-          <AvatarFallback>
-            {user?.name && getSummaryName(user?.name)}
-          </AvatarFallback>
-        </Avatar> */}
+      <div className="flex items-start gap-3">
         {user?.avatar && user?.avatar !== null && (
           <div>
             <Image
@@ -71,16 +52,35 @@ const TextChat = (props: PropType) => {
             </AvatarFallback>
           </Avatar>
         )}
-        <div className="flex flex-col text-[13px]">
-          <div className="flex items-center gap-3">
-            <p className="font-bold">{`${user?.name} ${
-              userIdSession === chat?.user?.id ? "(You)" : ""
-            }`}</p>
-            <p className="text-[12px] text-zinc-400">
-              {chat?.sended ? formatDateStr(chat?.sended) : "undefined"}
-            </p>
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-col text-[13px]">
+            <div className="flex items-center gap-3">
+              <p className="font-bold">{`${user?.name} ${
+                userIdSession === chat?.user?.id ? "(You)" : ""
+              }`}</p>
+              <p className="text-[12px] text-zinc-400">
+                {chat?.sended ? formatDateStr(chat?.sended) : "undefined"}
+              </p>
+            </div>
+            {user?.avatar === null && (
+              <Avatar className="w-[40px] h-[40px]">
+                <AvatarFallback>
+                  {user?.name && getSummaryName(user?.name)}
+                </AvatarFallback>
+              </Avatar>
+            )}
           </div>
-          <p>{chat?.text}</p>
+          {chat?.url && (
+            <Image
+              className="rounded-md"
+              style={{ width: "100%", height: "auto" }}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              src={chat?.url}
+              width="0"
+              height="0"
+              alt="image"
+            />
+          )}
         </div>
       </div>
       <div
@@ -124,4 +124,4 @@ const TextChat = (props: PropType) => {
   );
 };
 
-export default TextChat;
+export default ImageChat;
