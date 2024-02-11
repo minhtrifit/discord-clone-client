@@ -28,6 +28,28 @@ export const handleFileUpload = async (
   }
 };
 
+export const handleFileExtUpload = async (
+  bucket: string,
+  folderName: string,
+  file: any,
+  ext: string
+) => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(`${folderName}/file_${Date.now()}.${ext}`, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (error) {
+    console.error("Error uploading file:", error.message);
+    return null;
+  } else {
+    console.log("File uploaded successfully:", data);
+    return data;
+  }
+};
+
 export const getAllFile = async (name: string) => {
   const { data, error } = await supabase.storage.from(name).list("images", {
     limit: 100,

@@ -11,6 +11,7 @@ import { useParams, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
 import { v4 as uuidv4 } from "uuid";
+import { saveAs } from "file-saver";
 
 import { DirectMessageChatType, UserType } from "@/types";
 
@@ -31,7 +32,9 @@ import { toast } from "react-toastify";
 
 import { getAllChatsByUserId, getUserById } from "@/lib/action.api";
 import { formatDateStr, getSummaryName } from "@/lib/helper";
-import { handleFileUpload } from "@/lib/supabase";
+import { handleFileExtUpload, handleFileUpload } from "@/lib/supabase";
+import { ApplicationFileType } from "@/lib/utils";
+import FileChat from "./FileChat";
 
 // import { DirectMessageChatData } from "@/lib/utils";
 
@@ -391,26 +394,24 @@ const MainChat = () => {
   };
 
   const handleSendFileMessage = async () => {
-    // Update image
+    // Update file (image, document)
     const type = file?.type?.split("/")[0];
+    const ext = file?.name?.split(".")[1];
+    const fileDbName = file?.name;
+    // const format = file?.type?.split("/")[1];
 
-    if (fileName !== "" && type !== "image")
-      toast.error("Please upload image file");
+    if (file === null) toast.error("Please upload file to send message");
     else if (fileName !== "" && type === "image") {
       setLoading(true);
       let image = null;
-
       const res = await handleFileUpload("uploads", "images", file);
       const { fullPath }: any = res;
-
       if (res === null) {
         toast.error("Upload image failed");
         return;
       }
-
       // Create image url
       image = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${fullPath}`;
-
       // Create new image chat
       if (socket && session?.user?.id) {
         socket.emit(
@@ -435,7 +436,48 @@ const MainChat = () => {
           }
         );
       }
-    }
+    } else if (
+      fileName !== "" &&
+      fileDbName !== "" &&
+      ext &&
+      ApplicationFileType.includes(ext)
+    ) {
+      setLoading(true);
+      let fileUrl = null;
+      const res = await handleFileExtUpload("uploads", "files", file, ext);
+      const { fullPath }: any = res;
+      if (res === null) {
+        toast.error("Upload file failed");
+        return;
+      }
+      // Create file url
+      fileUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${fullPath}`;
+      // Create new image chat
+      if (socket && session?.user?.id) {
+        socket.emit(
+          "send_direct_message",
+          {
+            userId: session?.user?.id,
+            friendId: friend?.id,
+            provider: "file",
+            url: fileUrl,
+            fileName: fileDbName,
+          },
+          (res: {
+            message: string;
+            user: UserType;
+            friend: UserType;
+            chat: DirectMessageChatType;
+          }) => {
+            // console.log("Check send direct message:", res);
+            if (res?.chat) {
+              // console.log("SEND CHAT", res?.chat);
+              setChats(res?.chat);
+            }
+          }
+        );
+      }
+    } else toast.error("File format not correct");
 
     setLoading(false);
     handleResetImage();
@@ -461,6 +503,20 @@ const MainChat = () => {
       window.removeEventListener("keydown", handleUserKeyPress);
     };
   }, [handleUserKeyPress]);
+
+  const handleDownloadFile = async (
+    bucket: string,
+    folderName: string,
+    chat: DirectMessageChatType
+  ) => {
+    const fileName = chat?.url?.split(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${folderName}`
+    )[1];
+
+    if (chat?.url && fileName) {
+      saveAs(chat?.url, fileName);
+    }
+  };
 
   return (
     <div className="relative w-[100%] h-screen flex flex-col">
@@ -578,6 +634,24 @@ const MainChat = () => {
                   friend={friend}
                   mainRef={mainRef}
                   handleDeleteChatById={handleDeleteChatById}
+                  handleDownloadFile={handleDownloadFile}
+                />
+              );
+            }
+
+            if (friend !== null && chat?.provider === "file") {
+              return (
+                <FileChat
+                  key={uuidv4()}
+                  userIdSession={session?.user?.id}
+                  user={
+                    chat?.userId === session?.user?.id ? session?.user : friend
+                  }
+                  chat={chat}
+                  friend={friend}
+                  mainRef={mainRef}
+                  handleDeleteChatById={handleDeleteChatById}
+                  handleDownloadFile={handleDownloadFile}
                 />
               );
             }

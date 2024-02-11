@@ -71,7 +71,7 @@ const TextChat = (props: PropType) => {
             </AvatarFallback>
           </Avatar>
         )}
-        <div className="flex flex-col text-[13px]">
+        <div className="flex flex-col gap-2 text-[13px]">
           <div className="flex items-center gap-3">
             <p className="font-bold">{`${user?.name} ${
               userIdSession === chat?.userId ? "(You)" : ""
@@ -81,6 +81,7 @@ const TextChat = (props: PropType) => {
             </p>
           </div>
           <p>{chat?.text}</p>
+          {/* <div className="text-[13px] flex items-center gap-3">Emoji</div> */}
         </div>
       </div>
       <div

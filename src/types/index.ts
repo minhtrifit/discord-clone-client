@@ -25,5 +25,6 @@ export interface DirectMessageChatType {
   type?: string;
   provider?: string;
   url?: string;
+  fileName?: string;
   sended?: string;
 }

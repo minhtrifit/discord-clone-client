@@ -249,3 +249,11 @@ export const DirectMessageChatData: DirectMessageChatType[] = [
     sended: "2024-02-05T06:08:22.692Z",
   },
 ];
+
+export const ApplicationFileType: string[] = [
+  "docx",
+  "xlsx",
+  "pdf",
+  "vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+];
