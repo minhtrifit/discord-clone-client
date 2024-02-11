@@ -1,6 +1,12 @@
 "use client";
 
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useParams, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useFriendStore, useSocketStore } from "@/lib/store";
@@ -289,7 +295,12 @@ const MainChat = () => {
       return;
     }
 
-    if (socket && session?.user?.id && formData?.message !== "") {
+    if (
+      socket &&
+      session?.user?.id &&
+      formData?.message !== "" &&
+      fileName === ""
+    ) {
       socket.emit(
         "send_direct_message",
         {
@@ -311,11 +322,15 @@ const MainChat = () => {
           }
         }
       );
+
+      setFormData({
+        message: "",
+      });
     }
 
-    setFormData({
-      message: "",
-    });
+    // setFormData({
+    //   message: "",
+    // });
   };
 
   const handleDeleteChatById = (chatId: string) => {
@@ -375,9 +390,7 @@ const MainChat = () => {
     }
   };
 
-  const handleSendFileMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleSendFileMessage = async () => {
     // Update image
     const type = file?.type?.split("/")[0];
 
@@ -427,6 +440,27 @@ const MainChat = () => {
     setLoading(false);
     handleResetImage();
   };
+
+  const handleUserKeyPress = useCallback(
+    (event: any) => {
+      const { key, keyCode } = event;
+      if (file && fileInputRef?.current) {
+        fileInputRef?.current.blur();
+        if (key === "Enter") {
+          handleSendFileMessage();
+        }
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [file]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleUserKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleUserKeyPress);
+    };
+  }, [handleUserKeyPress]);
 
   return (
     <div className="relative w-[100%] h-screen flex flex-col">

@@ -31,7 +31,7 @@ interface PropType {
   fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
   handleResetImage: () => void;
   handleFileSelection: (e: ChangeEvent<HTMLInputElement>) => void;
-  handleSendFileMessage: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSendFileMessage: () => void;
   loading: boolean;
 }
 
@@ -81,7 +81,8 @@ const ChatInput = (props: PropType) => {
               <form
                 className="flex items-center gap-5"
                 onSubmit={(e) => {
-                  handleSendFileMessage(e);
+                  e.preventDefault();
+                  handleSendFileMessage();
                 }}
               >
                 <p className="max-w-[300px] truncate">{fileName}</p>

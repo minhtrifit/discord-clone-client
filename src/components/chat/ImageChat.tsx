@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "react-toastify";
+import { saveAs } from "file-saver";
 
 import { MdEmojiEmotions } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
@@ -30,22 +31,15 @@ const ImageChat = (props: PropType) => {
     props;
 
   const handleDownloadImageFile = async () => {
+    const bucket = "uploads";
     const folderName = "images";
 
-    if (chat?.url) {
-      const fileName = chat?.url?.split(
-        `https://piwwbijgpwvzynpsplfn.supabase.co/storage/v1/object/public/uploads/images`
-      )[1];
+    const fileName = chat?.url?.split(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${folderName}`
+    )[1];
 
-      console.log(fileName);
-
-      // window.open(chat?.url, "_blank");
-      const aTag = document.createElement("a");
-      aTag.href = chat?.url;
-      aTag.setAttribute("download", "abc");
-      document.body.appendChild(aTag);
-      aTag.click();
-      aTag.remove();
+    if (chat?.url && fileName) {
+      saveAs(chat?.url, fileName);
     }
   };
 
@@ -73,7 +67,7 @@ const ImageChat = (props: PropType) => {
             </AvatarFallback>
           </Avatar>
         )}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <div className="flex flex-col text-[13px]">
             <div className="flex items-center gap-3">
               <p className="font-bold">{`${user?.name} ${
@@ -92,35 +86,37 @@ const ImageChat = (props: PropType) => {
             )}
           </div>
           {chat?.url && (
-            <Image
-              className="rounded-md"
-              style={{ width: "100%", height: "auto" }}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              src={chat?.url}
-              width="0"
-              height="0"
-              alt="image"
-            />
+            <div className="flex gap-3 items-end">
+              <Image
+                src={chat?.url}
+                className="rounded-md w-[200px] lg:w-[400px] h-auto"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                width="0"
+                height="0"
+                alt="image"
+              />
+              <div className="flex items-center gap-3">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        className="flex items-center justify-center p-2 rounded-md bg-primary-purple hover:bg-secondary-purple"
+                        onClick={() => {
+                          handleDownloadImageFile();
+                        }}
+                      >
+                        <IoMdDownload size={20} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Download Image</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
           )}
-          <div className="flex items-center gap-3">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    className="flex items-center justify-center p-2 rounded-md bg-primary-purple hover:bg-secondary-purple"
-                    onClick={() => {
-                      handleDownloadImageFile();
-                    }}
-                  >
-                    <IoMdDownload size={20} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Download Image</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          {/* <div className="text-[13px] flex items-center gap-3">Emoji</div> */}
         </div>
       </div>
       <div
