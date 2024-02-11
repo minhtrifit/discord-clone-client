@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 
 import { MdEmojiEmotions } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { IoMdDownload } from "react-icons/io";
 
 import { DirectMessageChatType, UserType } from "@/types";
 
@@ -27,6 +28,26 @@ interface PropType {
 const ImageChat = (props: PropType) => {
   const { userIdSession, user, chat, friend, mainRef, handleDeleteChatById } =
     props;
+
+  const handleDownloadImageFile = async () => {
+    const folderName = "images";
+
+    if (chat?.url) {
+      const fileName = chat?.url?.split(
+        `https://piwwbijgpwvzynpsplfn.supabase.co/storage/v1/object/public/uploads/images`
+      )[1];
+
+      console.log(fileName);
+
+      // window.open(chat?.url, "_blank");
+      const aTag = document.createElement("a");
+      aTag.href = chat?.url;
+      aTag.setAttribute("download", "abc");
+      document.body.appendChild(aTag);
+      aTag.click();
+      aTag.remove();
+    }
+  };
 
   return (
     <div
@@ -52,11 +73,11 @@ const ImageChat = (props: PropType) => {
             </AvatarFallback>
           </Avatar>
         )}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <div className="flex flex-col text-[13px]">
             <div className="flex items-center gap-3">
               <p className="font-bold">{`${user?.name} ${
-                userIdSession === chat?.user?.id ? "(You)" : ""
+                userIdSession === chat?.userId ? "(You)" : ""
               }`}</p>
               <p className="text-[12px] text-zinc-400">
                 {chat?.sended ? formatDateStr(chat?.sended) : "undefined"}
@@ -81,6 +102,25 @@ const ImageChat = (props: PropType) => {
               alt="image"
             />
           )}
+          <div className="flex items-center gap-3">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    className="flex items-center justify-center p-2 rounded-md bg-primary-purple hover:bg-secondary-purple"
+                    onClick={() => {
+                      handleDownloadImageFile();
+                    }}
+                  >
+                    <IoMdDownload size={20} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Download Image</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </div>
       <div

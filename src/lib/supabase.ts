@@ -48,3 +48,32 @@ export const getAllFile = async (name: string) => {
     return files;
   }
 };
+
+export const downloadFile = async (
+  bucket: string,
+  folderName: string,
+  fileName: string
+) => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .download(`${folderName}/${fileName}`);
+
+  if (error) {
+    console.error("Error download files:", error.message);
+    return { data, status: false };
+  } else {
+    return { data, status: true };
+  }
+};
+
+export const getPublicUrl = async (
+  bucket: string,
+  folderName: string,
+  fileName: string
+) => {
+  const { data } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(`${folderName}/${fileName}`);
+
+  return data.publicUrl;
+};
