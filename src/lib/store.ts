@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { Socket } from "socket.io-client";
 
-import { DirectMessageChatType, UserType } from "@/types";
+import { DirectMessageChatType, ServerType, UserType } from "@/types";
 
 interface SocketState {
   socket: Socket | null;
@@ -33,6 +33,13 @@ interface FriendState {
   setChats: (chat: DirectMessageChatType) => void;
   updateChats: (newChats: DirectMessageChatType[]) => void;
   setUserProfileToggle: () => void;
+}
+
+interface ServerState {
+  server: ServerType | null;
+  loading: boolean;
+  setServer: (server: ServerType) => void;
+  setLoading: (value: boolean) => void;
 }
 
 export const useSocketStore = create<SocketState>()(
@@ -87,5 +94,14 @@ export const useFriendStore = create<FriendState>()(
       set(() => ({ chats: newChats })),
     setUserProfileToggle: () =>
       set((state) => ({ userProfileToggle: !state.userProfileToggle })),
+  }))
+);
+
+export const useServerStore = create<ServerState>()(
+  devtools((set) => ({
+    server: null,
+    loading: false,
+    setServer: (server: ServerType) => set((state) => ({ server: server })),
+    setLoading: (value: boolean) => set((state) => ({ loading: value })),
   }))
 );

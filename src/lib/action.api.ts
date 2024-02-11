@@ -176,3 +176,21 @@ export const getAllChatsByUserId = async (userId: string, friendId: string) => {
     return err?.response?.data;
   }
 };
+
+export const getDetailServerById = async (serverId: string, userId: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/server/detail/${serverId}`,
+      {
+        headers: {
+          userId: userId,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};

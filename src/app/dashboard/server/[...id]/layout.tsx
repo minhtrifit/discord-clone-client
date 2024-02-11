@@ -1,3 +1,4 @@
+import ServerSubSlidebar from "@/components/server/ServerSubSlidebar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,5 +11,10 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div>{children}</div>;
+  return (
+    <div className="dark:bg-secondary-gray flex h-screen max-h-screen">
+      <ServerSubSlidebar />
+      {children}
+    </div>
+  );
 }
