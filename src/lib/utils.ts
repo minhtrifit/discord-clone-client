@@ -1,4 +1,4 @@
-import { ServerType, DirectMessageChatType } from "@/types";
+import { CategoryType, ChannelType } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -172,88 +172,70 @@ export const HomeFooterLinks = [
   },
 ];
 
-export const ServerData: ServerType[] = [
-  {
-    id: 1,
-    name: "Những con mèo hoang",
-    owner: 4416,
-    avatar: "/images/avatar.png",
-  },
-  {
-    id: 2,
-    name: "HCMUS Public",
-    owner: 1599,
-    avatar: "https://github.com/shadcn.png",
-  },
-  {
-    id: 3,
-    name: "Coder Group",
-    owner: 2538,
-    avatar: "https://github.com/shadcn.png",
-  },
-];
-
-export const DirectMessageChatData: DirectMessageChatType[] = [
-  {
-    user: {
-      id: "5c16c27e-227d-44f7-bd3c-b06f1cfbb4ea",
-      provider: "email",
-      email: "cauthuminhtri10@gmail.com",
-      name: "Trí Đẹp Trai",
-      password: "$2b$10$1bo8Ytn61Ox5Idg3HBCUUeydIUwAF3l2BOWa/h.xLdIpFGu8lCL3S",
-      avatar:
-        "https://piwwbijgpwvzynpsplfn.supabase.co/storage/v1/object/public/uploads/user_avatars/file_1707149013190.png",
-      created: "2024-02-05T10:23:06.477Z",
-    },
-    text: "Hello",
-    sended: "2024-02-05T06:08:22.692Z",
-  },
-  {
-    user: {
-      id: "9f9f3417-5021-492b-ae2f-e77d608e10a4",
-      provider: "github",
-      email: "minhtri.fit@gmail.com",
-      name: "Lê Minh Trí",
-      password: null,
-      avatar: "https://avatars.githubusercontent.com/u/86849422?v=4",
-      created: "2024-02-03T15:51:34.999Z",
-    },
-    text: "Nice to meet you",
-    sended: "2024-02-05T10:23:06.477Z",
-  },
-  {
-    user: {
-      id: "9f9f3417-5021-492b-ae2f-e77d608e10a4",
-      provider: "github",
-      email: "minhtri.fit@gmail.com",
-      name: "Lê Minh Trí",
-      password: null,
-      avatar: "https://avatars.githubusercontent.com/u/86849422?v=4",
-      created: "2024-02-03T15:51:34.999Z",
-    },
-    text: "How about your project",
-    sended: "2024-02-05T10:23:06.477Z",
-  },
-  {
-    user: {
-      id: "5c16c27e-227d-44f7-bd3c-b06f1cfbb4ea",
-      provider: "email",
-      email: "cauthuminhtri10@gmail.com",
-      name: "Trí Đẹp Trai",
-      password: "$2b$10$1bo8Ytn61Ox5Idg3HBCUUeydIUwAF3l2BOWa/h.xLdIpFGu8lCL3S",
-      avatar:
-        "https://piwwbijgpwvzynpsplfn.supabase.co/storage/v1/object/public/uploads/user_avatars/file_1707149013190.png",
-      created: "2024-02-05T10:23:06.477Z",
-    },
-    text: "It's still in progress, thank you",
-    sended: "2024-02-05T06:08:22.692Z",
-  },
-];
-
 export const ApplicationFileType: string[] = [
   "docx",
   "xlsx",
   "pdf",
   "vnd.openxmlformats-officedocument.wordprocessingml.document",
   "vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+];
+
+export const ChannelsData: ChannelType[] = [
+  {
+    id: "1",
+    name: "chat-room-1",
+    categoryId: "1",
+  },
+  {
+    id: "2",
+    name: "chat-room-2",
+    categoryId: "1",
+  },
+  {
+    id: "3",
+    name: "study-chat-1",
+    categoryId: "2",
+  },
+  {
+    id: "4",
+    name: "study-chat-2",
+    categoryId: "2",
+  },
+  {
+    id: "5",
+    name: "coding-challenge-1",
+    categoryId: "3",
+  },
+  {
+    id: "6",
+    name: "coding-challenge-2",
+    categoryId: "3",
+  },
+];
+
+export const CategoriesData: CategoryType[] = [
+  {
+    id: "1",
+    serverId: "7bfe7f98-d24a-41ec-ad99-41f314f2ffed",
+    name: "chatting-1",
+    channels: ChannelsData.filter((channel) => {
+      return channel.categoryId === "1";
+    }),
+  },
+  {
+    id: "2",
+    serverId: "7bfe7f98-d24a-41ec-ad99-41f314f2ffed",
+    name: "chatting-2",
+    channels: ChannelsData.filter((channel) => {
+      return channel.categoryId === "2";
+    }),
+  },
+  {
+    id: "3",
+    serverId: "3f663847-8504-4e8a-a882-3ef4d8aaac6b",
+    name: "welcome-channel",
+    channels: ChannelsData.filter((channel) => {
+      return channel.categoryId === "3";
+    }),
+  },
 ];

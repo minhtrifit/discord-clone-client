@@ -1,6 +1,5 @@
 import { ServerType } from "@/types";
 
-import { ServerData } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 
 import { getJoinServerByUserId } from "@/lib/action.api";

@@ -28,3 +28,18 @@ export interface DirectMessageChatType {
   fileName?: string;
   sended?: string;
 }
+
+export interface CategoryType {
+  id?: string;
+  serverId?: string;
+  name?: string;
+  channels?: ChannelType[];
+  created?: string;
+}
+
+export interface ChannelType {
+  id?: string;
+  categoryId?: string;
+  name?: string;
+  created?: string;
+}

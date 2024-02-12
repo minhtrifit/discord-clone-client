@@ -7,13 +7,11 @@ import { useServerStore } from "@/lib/store";
 
 import { getDetailServerById } from "@/lib/action.api";
 
-import ServerMemberSlidebar from "@/components/server/ServerMemberSlidebar";
-
-const DetailServerPage = () => {
+const DetailChannelPage = () => {
   const { data: session }: any = useSession();
 
   const params = useParams();
-  const { id } = params;
+  const channelId = params?.["channel-id"];
 
   const setServer = useServerStore((state) => {
     return state.setServer;
@@ -24,9 +22,9 @@ const DetailServerPage = () => {
   });
 
   const handleGetDetailServer = async () => {
-    if (params?.id[0] && session?.user?.id) {
+    if (params?.id && typeof params?.id === "string" && session?.user?.id) {
       setLoading(true);
-      const res = await getDetailServerById(params?.id[0], session?.user?.id);
+      const res = await getDetailServerById(params?.id, session?.user?.id);
 
       if (
         res?.message === "Get detail server successfully" &&
@@ -45,17 +43,10 @@ const DetailServerPage = () => {
   }, [session]);
 
   return (
-    <div className="w-[calc(100vw-320px)] flex overflow-y-auto">
-      <div className="w-[100%]">
-        <p>ServerMainChat</p>
-      </div>
-      <div
-        className={`hidden h-screen border-2 border-l-primary-white dark:border-l-primary-gray min-[900px]:flex w-[300px]`}
-      >
-        <ServerMemberSlidebar />
-      </div>
+    <div className="w-[100%]">
+      <p>Detail Channel Page: {channelId}</p>
     </div>
   );
 };
 
-export default DetailServerPage;
+export default DetailChannelPage;
