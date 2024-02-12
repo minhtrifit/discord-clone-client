@@ -22,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Skeleton } from "@/components/ui/skeleton";
 import TextChat from "./TextChat";
 import ChatInput from "./ChatInput";
 import ImageChat from "./ImageChat";
@@ -59,6 +60,7 @@ const MainChat = () => {
   const [fileName, setFileName] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [chatsLoading, setChatsLoading] = useState<boolean>(false);
 
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -101,11 +103,14 @@ const MainChat = () => {
     const friendId = params?.id[0];
 
     if (session?.user?.id && friendId !== undefined) {
+      setChatsLoading(true);
       const res = await getAllChatsByUserId(session?.user?.id, friendId);
 
       if (res?.message === "Get all direct messages successfully") {
         updateChats(res?.chats);
       }
+
+      setChatsLoading(false);
     }
   };
 
@@ -169,6 +174,14 @@ const MainChat = () => {
     mainRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [loading]);
 
+  useEffect(() => {
+    if (
+      chatBoxRef?.current?.clientHeight &&
+      chatBoxRef?.current?.clientHeight < screenHeight - 210
+    )
+      setIsOverFlow(false);
+  }, [chats, screenHeight]);
+
   // Receive direct message
   useEffect(() => {
     if (socket) {
@@ -177,7 +190,6 @@ const MainChat = () => {
         (rs: {
           message: string;
           user: UserType;
-          friend: UserType;
           chat: DirectMessageChatType;
         }) => {
           // console.log("Receive direct message request:", rs);
@@ -190,7 +202,7 @@ const MainChat = () => {
               "get_all_chats",
               {
                 userId: session?.user?.id,
-                friendId: friend?.id,
+                friendId: rs?.user?.id,
               },
               (res: {
                 message: string;
@@ -199,10 +211,7 @@ const MainChat = () => {
                 chats: DirectMessageChatType[];
               }) => {
                 // console.log("Check get all chats:", res);
-                if (res?.chats) {
-                  // console.log(res?.chats);
-                  updateChats(res?.chats);
-                }
+                if (res?.chats) updateChats(res?.chats);
               }
             );
           }
@@ -237,7 +246,7 @@ const MainChat = () => {
               "get_all_chats",
               {
                 userId: session?.user?.id,
-                friendId: friend?.id,
+                friendId: rs?.friendId,
               },
               (res: {
                 message: string;
@@ -598,7 +607,19 @@ const MainChat = () => {
             </div>
           )}
           {chats?.map((chat: DirectMessageChatType) => {
-            if (friend === null) {
+            if (chatsLoading) {
+              return (
+                <div key={uuidv4()} className="flex items-center space-x-4">
+                  <Skeleton className="h-12 w-12 rounded-full bg-zinc-300" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px] bg-zinc-300" />
+                    <Skeleton className="h-4 w-[200px] bg-zinc-300" />
+                  </div>
+                </div>
+              );
+            }
+
+            if (!chatsLoading && friend === null) {
               return (
                 <div key={uuidv4()}>
                   <p>Chat is not available</p>

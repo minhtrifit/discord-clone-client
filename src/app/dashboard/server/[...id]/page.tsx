@@ -7,6 +7,8 @@ import { useServerStore } from "@/lib/store";
 
 import { getDetailServerById } from "@/lib/action.api";
 
+import ServerMemberSlidebar from "@/components/server/ServerMemberSlidebar";
+
 const DetailServerPage = () => {
   const { data: session }: any = useSession();
 
@@ -42,7 +44,18 @@ const DetailServerPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  return <div>DetailServerPage: {id}</div>;
+  return (
+    <div className="w-[calc(100vw-320px)] flex overflow-y-auto">
+      <div className="w-[100%]">
+        <p>ServerMainChat</p>
+      </div>
+      <div
+        className={`hidden h-screen border-2 border-l-primary-white dark:border-l-primary-gray min-[900px]:flex w-[300px]`}
+      >
+        <ServerMemberSlidebar />
+      </div>
+    </div>
+  );
 };
 
 export default DetailServerPage;

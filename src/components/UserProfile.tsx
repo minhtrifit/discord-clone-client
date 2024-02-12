@@ -61,7 +61,9 @@ const UserProfile = () => {
               <p className="w-[70px] truncate font-bold">
                 {session?.user?.name}
               </p>
-              <p className="font-semibold text-[11px] text-green-500">Online</p>
+              <p className="font-semibold text-[11px] text-green-500">
+                {session?.user?.name && "Online"}
+              </p>
             </div>
           </div>
           <div className="flex items-center">
