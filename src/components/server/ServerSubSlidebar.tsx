@@ -1,8 +1,10 @@
 "use client";
 
-import { useServerStore } from "@/lib/store";
+import { useServerStore, useSocketStore } from "@/lib/store";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
+import Link from "next/link";
 
 import { RiCalendarEventLine } from "react-icons/ri";
 
@@ -10,9 +12,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import UserProfile from "../UserProfile";
 import ServerDropdownMenu from "./ServerDropdownMenu";
 import ServerCategoryItem from "./ServerCategoryItem";
+import CreateNewCategoryBtn from "./CreateNewCategoryBtn";
 
-import { CategoriesData } from "@/lib/utils";
 import { CategoryType } from "@/types";
+
+// import { CategoriesData } from "@/lib/utils";
+import { getDetailServerById } from "@/lib/action.api";
 
 const ServerSubSlidebar = () => {
   const { data: session }: any = useSession();
@@ -20,13 +25,72 @@ const ServerSubSlidebar = () => {
   const params = useParams();
   const serverId = params?.id;
 
+  const socket = useSocketStore((state) => {
+    return state.socket;
+  });
+
   const server = useServerStore((state) => {
     return state.server;
   });
 
-  const loading = useServerStore((state) => {
-    return state.loading;
+  const setServer = useServerStore((state) => {
+    return state.setServer;
   });
+
+  const setLoading = useServerStore((state) => {
+    return state.setLoading;
+  });
+
+  const categories = useServerStore((state) => {
+    return state.categories;
+  });
+
+  const updateCategories = useServerStore((state) => {
+    return state.updateCategories;
+  });
+
+  const handleGetDetailServer = async () => {
+    if (params?.id && typeof params?.id === "string" && session?.user?.id) {
+      setLoading(true);
+      const res = await getDetailServerById(params?.id, session?.user?.id);
+
+      if (
+        res?.message === "Get detail server successfully" &&
+        res?.server !== null
+      ) {
+        setServer(res?.server);
+      }
+
+      setLoading(false);
+    }
+  };
+
+  const handleGetAllCategories = async () => {
+    if (socket && serverId) {
+      socket.emit(
+        "get_all_categories_by_server_id",
+        {
+          serverId: serverId,
+        },
+        (res: { message: string; categories: CategoryType[] }) => {
+          // console.log("CHECK GET ALL CATEGORIES", res);
+          if (res?.message === "Get all categories by server id successfully") {
+            updateCategories(res?.categories);
+          }
+        }
+      );
+    }
+  };
+
+  useEffect(() => {
+    handleGetDetailServer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, serverId]);
+
+  useEffect(() => {
+    handleGetAllCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, serverId]);
 
   return (
     <div className="relative w-[240px] overflow-x-auto bg-secondary-white dark:bg-primary-gray dark:text-gray-400">
@@ -38,25 +102,35 @@ const ServerSubSlidebar = () => {
             </div>
           </div>
         ) : (
-          <p className="text-[15px] font-bold dark:text-white max-w-[240px] truncate">
-            {server?.name}
-          </p>
+          <Link href={`/dashboard/server/${server?.id}`}>
+            <p className="text-[15px] font-bold dark:text-white max-w-[240px] truncate hover:cursor-pointer hover:underline">
+              {server?.name}
+            </p>
+          </Link>
         )}
         <ServerDropdownMenu />
       </div>
-      <div className="text-[15px] p-2">
-        <button
-          className="w-[100%] flex items-center gap-3 rounded-md p-2 text-zinc-500 hover:bg-zinc-300 hover:text-primary-black
-                            dark:text-gray-400 dark:hover:bg-zinc-700 dark:hover:text-white"
-        >
-          <RiCalendarEventLine size={20} />
-          <p>Events</p>
-        </button>
-      </div>
+      {server && server?.owner?.id === session?.user?.id && (
+        <div className="p-2">
+          <button
+            className="w-[100%] flex items-center gap-3 rounded-md p-2 text-zinc-500 hover:bg-zinc-300 hover:text-primary-black
+                           dark:text-gray-400 dark:hover:bg-zinc-700 dark:hover:text-white"
+          >
+            <RiCalendarEventLine size={20} />
+            <p className="text-[13px] font-semibold">Events</p>
+          </button>
+        </div>
+      )}
       <div className="w-[95%] h-[1px] mx-auto bg-zinc-600 dark:bg-zinc-500"></div>
+      {server && server?.owner?.id === session?.user?.id && (
+        <>
+          <CreateNewCategoryBtn />
+          <div className="w-[95%] h-[1px] mx-auto bg-zinc-600 dark:bg-zinc-500"></div>
+        </>
+      )}
       <div className="w-[100%] max-h-[calc(100vh-180px)] px-2 py-4 overflow-y-auto">
         <div className="w-[100%] flex flex-col gap-3">
-          {CategoriesData?.map((category: CategoryType) => {
+          {categories?.map((category: CategoryType) => {
             if (category?.serverId === serverId)
               return (
                 <ServerCategoryItem key={category?.id} category={category} />

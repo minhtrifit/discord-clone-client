@@ -1,7 +1,7 @@
 export interface ServerType {
   id?: number | string | null; // null is for direct messages server
   name?: string;
-  owner?: number; // userId
+  owner?: UserType; // userId
   avatar?: string | null;
   created?: string;
 }
@@ -41,5 +41,6 @@ export interface ChannelType {
   id?: string;
   categoryId?: string;
   name?: string;
+  type?: "text" | "voice";
   created?: string;
 }

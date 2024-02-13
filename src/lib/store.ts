@@ -2,7 +2,12 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { Socket } from "socket.io-client";
 
-import { DirectMessageChatType, ServerType, UserType } from "@/types";
+import {
+  CategoryType,
+  DirectMessageChatType,
+  ServerType,
+  UserType,
+} from "@/types";
 
 interface SocketState {
   socket: Socket | null;
@@ -38,8 +43,10 @@ interface FriendState {
 interface ServerState {
   server: ServerType | null;
   loading: boolean;
+  categories: CategoryType[];
   setServer: (server: ServerType) => void;
   setLoading: (value: boolean) => void;
+  updateCategories: (categories: CategoryType[]) => void;
 }
 
 export const useSocketStore = create<SocketState>()(
@@ -101,7 +108,10 @@ export const useServerStore = create<ServerState>()(
   devtools((set) => ({
     server: null,
     loading: false,
+    categories: [],
     setServer: (server: ServerType) => set((state) => ({ server: server })),
     setLoading: (value: boolean) => set((state) => ({ loading: value })),
+    updateCategories: (newCategories: CategoryType[]) =>
+      set(() => ({ categories: newCategories })),
   }))
 );

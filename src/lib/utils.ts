@@ -185,31 +185,37 @@ export const ChannelsData: ChannelType[] = [
     id: "1",
     name: "chat-room-1",
     categoryId: "1",
+    type: "text",
   },
   {
     id: "2",
     name: "chat-room-2",
     categoryId: "1",
+    type: "text",
   },
   {
     id: "3",
     name: "study-chat-1",
     categoryId: "2",
+    type: "text",
   },
   {
     id: "4",
     name: "study-chat-2",
     categoryId: "2",
+    type: "text",
   },
   {
     id: "5",
     name: "coding-challenge-1",
+    type: "text",
     categoryId: "3",
   },
   {
     id: "6",
     name: "coding-challenge-2",
     categoryId: "3",
+    type: "voice",
   },
 ];
 
