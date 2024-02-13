@@ -73,7 +73,7 @@ const ServerSubSlidebar = () => {
           serverId: serverId,
         },
         (res: { message: string; categories: CategoryType[] }) => {
-          console.log("CHECK GET ALL CATEGORIES", res);
+          // console.log("CHECK GET ALL CATEGORIES", res);
           if (res?.message === "Get all categories by server id successfully") {
             updateCategories(res?.categories);
           }
@@ -133,6 +133,69 @@ const ServerSubSlidebar = () => {
         (rs: { message: string; channel: ChannelType }) => {
           // console.log("Get new channel created:", rs);
           if (rs?.message === "Your server have a new channel" && rs?.channel) {
+            socket.emit(
+              "get_all_categories_by_server_id",
+              {
+                serverId: server?.id,
+              },
+              (res: { message: string; categories: CategoryType[] }) => {
+                if (
+                  res?.message ===
+                  "Get all categories by server id successfully"
+                ) {
+                  updateCategories(res?.categories);
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  // Receive category deleted
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "get_delete_category",
+        (rs: { message: string; categoryId: string }) => {
+          // console.log("Get category deleted:", rs);
+          if (
+            rs?.message === "Your server delete a category" &&
+            rs?.categoryId
+          ) {
+            socket.emit(
+              "get_all_categories_by_server_id",
+              {
+                serverId: server?.id,
+              },
+              (res: { message: string; categories: CategoryType[] }) => {
+                if (
+                  res?.message ===
+                  "Get all categories by server id successfully"
+                ) {
+                  updateCategories(res?.categories);
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  // Receive channel deleted
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "get_delete_channel",
+        (rs: { message: string; channelId: string }) => {
+          // console.log("Get channel deleted:", rs);
+          if (rs?.message === "Your server delete a channel" && rs?.channelId) {
             socket.emit(
               "get_all_categories_by_server_id",
               {

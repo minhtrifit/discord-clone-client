@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useServerStore } from "@/lib/store";
+import { useSession } from "next-auth/react";
 
 import {
   Accordion,
@@ -22,9 +24,10 @@ import { HiSpeakerWave } from "react-icons/hi2";
 import { MdAdd } from "react-icons/md";
 
 import { CategoryType, ChannelType } from "@/types";
-import { useServerStore } from "@/lib/store";
-import { useSession } from "next-auth/react";
+
 import CreateNewChannelBtn from "./CreateNewChannelBtn";
+import DeleteChannelContext from "./DeleteChannelContext";
+import DeleteCategoryContext from "./DeleteCategoryContext";
 
 interface PropType {
   category: CategoryType;
@@ -80,98 +83,101 @@ const ServerCategoryItem = (props: PropType) => {
           ref={categoryBtnRef}
           className="text-[12px] font-bold hover:no-underline dark:hover:text-white"
         >
-          <div className="w-[90%] flex items-center justify-between">
-            <p className="pl-2 max-w-[180px] truncate">{category?.name}</p>
-            {server && server?.owner?.id === session?.user?.id && (
-              <CreateNewChannelBtn
-                category={category}
-                openCreateChannel={openCreateChannel}
-                setOpenCreateChannel={setOpenCreateChannel}
-              >
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div ref={addNewChannelBtnRef}>
-                        <MdAdd size={20} />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Create Channel</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CreateNewChannelBtn>
-            )}
-          </div>
+          <DeleteCategoryContext category={category}>
+            <div className="w-[200px] flex items-center justify-between">
+              <p className="pl-2 max-w-[180px] truncate">{category?.name}</p>
+              {server && server?.owner?.id === session?.user?.id && (
+                <CreateNewChannelBtn
+                  category={category}
+                  openCreateChannel={openCreateChannel}
+                  setOpenCreateChannel={setOpenCreateChannel}
+                >
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div ref={addNewChannelBtnRef}>
+                          <MdAdd size={20} />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Create Channel</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </CreateNewChannelBtn>
+              )}
+            </div>
+          </DeleteCategoryContext>
         </AccordionTrigger>
         <AccordionContent>
           {category?.channels?.map((channel: ChannelType) => {
             return (
-              <div
-                key={channel?.id}
-                className="flex items-center justify-between p-2 rounded-md hover:cursor-pointer text-zinc-500 hover:bg-zinc-300 hover:text-primary-black
+              <DeleteChannelContext key={channel?.id} channel={channel}>
+                <div
+                  className="flex items-center justify-between p-2 rounded-md hover:cursor-pointer text-zinc-500 hover:bg-zinc-300 hover:text-primary-black
                             dark:text-gray-400 dark:hover:bg-zinc-700 dark:hover:text-white"
-              >
-                {channel?.type === "text" && (
-                  <Link
-                    href={`/dashboard/server/${serverId}/channel/${channel?.id}`}
-                  >
+                >
+                  {channel?.type === "text" && (
+                    <Link
+                      href={`/dashboard/server/${serverId}/channel/${channel?.id}`}
+                    >
+                      <div className="text-[13px] flex items-center gap-3">
+                        <p className="flex items-center justify-center text-[23px] w-[30px]">
+                          #
+                        </p>
+                        <p className="max-w-[120px] truncate hover:underline">
+                          {channel?.name}
+                        </p>
+                      </div>
+                    </Link>
+                  )}
+                  {channel?.type === "voice" && (
                     <div className="text-[13px] flex items-center gap-3">
-                      <p className="flex items-center justify-center text-[23px] w-[30px]">
-                        #
-                      </p>
+                      <HiSpeakerWave
+                        className="flex items-center justify-center text-[23px] w-[30px]"
+                        size={20}
+                      />
                       <p className="max-w-[120px] truncate hover:underline">
                         {channel?.name}
                       </p>
                     </div>
-                  </Link>
-                )}
-                {channel?.type === "voice" && (
-                  <div className="text-[13px] flex items-center gap-3">
-                    <HiSpeakerWave
-                      className="flex items-center justify-center text-[23px] w-[30px]"
-                      size={20}
-                    />
-                    <p className="max-w-[120px] truncate hover:underline">
-                      {channel?.name}
-                    </p>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              if (channel?.id) handleCreateInvite(channel?.id);
+                            }}
+                          >
+                            <IoPersonAddSharp size={15} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Create Invite</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              if (channel?.id) handleEditChannel(channel?.id);
+                            }}
+                          >
+                            <IoSettingsOutline size={15} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Edit channel</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => {
-                            if (channel?.id) handleCreateInvite(channel?.id);
-                          }}
-                        >
-                          <IoPersonAddSharp size={15} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Create Invite</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => {
-                            if (channel?.id) handleEditChannel(channel?.id);
-                          }}
-                        >
-                          <IoSettingsOutline size={15} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Edit channel</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 </div>
-              </div>
+              </DeleteChannelContext>
             );
           })}
         </AccordionContent>
