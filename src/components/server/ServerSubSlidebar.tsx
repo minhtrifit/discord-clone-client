@@ -14,7 +14,7 @@ import ServerDropdownMenu from "./ServerDropdownMenu";
 import ServerCategoryItem from "./ServerCategoryItem";
 import CreateNewCategoryBtn from "./CreateNewCategoryBtn";
 
-import { CategoryType } from "@/types";
+import { CategoryType, ChannelType } from "@/types";
 
 // import { CategoriesData } from "@/lib/utils";
 import { getDetailServerById } from "@/lib/action.api";
@@ -73,7 +73,7 @@ const ServerSubSlidebar = () => {
           serverId: serverId,
         },
         (res: { message: string; categories: CategoryType[] }) => {
-          // console.log("CHECK GET ALL CATEGORIES", res);
+          console.log("CHECK GET ALL CATEGORIES", res);
           if (res?.message === "Get all categories by server id successfully") {
             updateCategories(res?.categories);
           }
@@ -91,6 +91,69 @@ const ServerSubSlidebar = () => {
     handleGetAllCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, serverId]);
+
+  // Receive new category created
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "get_new_category",
+        (rs: { message: string; category: CategoryType }) => {
+          // console.log("Get new category created:", rs);
+          if (
+            rs?.message === "Your server have a new channel" &&
+            rs?.category
+          ) {
+            socket.emit(
+              "get_all_categories_by_server_id",
+              {
+                serverId: server?.id,
+              },
+              (res: { message: string; categories: CategoryType[] }) => {
+                if (
+                  res?.message ===
+                  "Get all categories by server id successfully"
+                ) {
+                  updateCategories(res?.categories);
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  // Receive new channel created
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        "get_new_channel",
+        (rs: { message: string; channel: ChannelType }) => {
+          // console.log("Get new channel created:", rs);
+          if (rs?.message === "Your server have a new channel" && rs?.channel) {
+            socket.emit(
+              "get_all_categories_by_server_id",
+              {
+                serverId: server?.id,
+              },
+              (res: { message: string; categories: CategoryType[] }) => {
+                if (
+                  res?.message ===
+                  "Get all categories by server id successfully"
+                ) {
+                  updateCategories(res?.categories);
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
 
   return (
     <div className="relative w-[240px] overflow-x-auto bg-secondary-white dark:bg-primary-gray dark:text-gray-400">
