@@ -4,9 +4,11 @@ import { Socket } from "socket.io-client";
 
 import {
   CategoryType,
+  ChannelType,
   DirectMessageChatType,
   ServerType,
   UserType,
+  ChannelMessageChatType,
 } from "@/types";
 
 interface SocketState {
@@ -44,9 +46,14 @@ interface ServerState {
   server: ServerType | null;
   loading: boolean;
   categories: CategoryType[];
+  channel: ChannelType | null;
+  channelChats: ChannelMessageChatType[];
   setServer: (server: ServerType) => void;
   setLoading: (value: boolean) => void;
   updateCategories: (categories: CategoryType[]) => void;
+  setChannel: (newChannel: ChannelType) => void;
+  updateChannelChats: (channelChats: ChannelMessageChatType[]) => void;
+  setChannelChats: (chat: ChannelMessageChatType) => void;
 }
 
 export const useSocketStore = create<SocketState>()(
@@ -109,9 +116,17 @@ export const useServerStore = create<ServerState>()(
     server: null,
     loading: false,
     categories: [],
+    channel: null,
+    channelChats: [],
     setServer: (server: ServerType) => set((state) => ({ server: server })),
     setLoading: (value: boolean) => set((state) => ({ loading: value })),
     updateCategories: (newCategories: CategoryType[]) =>
       set(() => ({ categories: newCategories })),
+    setChannel: (newChannel: ChannelType) =>
+      set((state) => ({ channel: newChannel })),
+    updateChannelChats: (channelChats: ChannelMessageChatType[]) =>
+      set(() => ({ channelChats: channelChats })),
+    setChannelChats: (chat: ChannelMessageChatType) =>
+      set((state) => ({ channelChats: [...state.channelChats, chat] })),
   }))
 );

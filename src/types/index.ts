@@ -44,3 +44,16 @@ export interface ChannelType {
   type?: "text" | "voice";
   created?: string;
 }
+
+export interface ChannelMessageChatType {
+  id?: string;
+  user: UserType | any;
+  serverId?: string;
+  channelId?: string;
+  text: string;
+  type?: string;
+  provider?: string;
+  url?: string;
+  fileName?: string;
+  sended?: string;
+}

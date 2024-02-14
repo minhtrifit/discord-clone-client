@@ -194,3 +194,42 @@ export const getDetailServerById = async (serverId: string, userId: string) => {
     return err?.response?.data;
   }
 };
+
+export const getAllChatsByChannelId = async (
+  userId: string,
+  channelId: string
+) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/server/channel/chat/${channelId}`,
+      {
+        headers: {
+          userId: userId,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};
+
+export const getChannelById = async (userId: string, channelId: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/server/channel/${channelId}`,
+      {
+        headers: {
+          userId: userId,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};

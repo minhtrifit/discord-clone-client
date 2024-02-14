@@ -7,11 +7,13 @@ import { useServerStore } from "@/lib/store";
 
 import { getDetailServerById } from "@/lib/action.api";
 
+import ChannelMainChat from "@/components/server/ChannelMainChat";
+
 const DetailChannelPage = () => {
   const { data: session }: any = useSession();
 
   const params = useParams();
-  const channelId = params?.["channel-id"];
+  // const channelId = params?.["channel-id"];
 
   const setServer = useServerStore((state) => {
     return state.setServer;
@@ -44,7 +46,7 @@ const DetailChannelPage = () => {
 
   return (
     <div className="w-[100%]">
-      <p>Detail Channel Page: {channelId}</p>
+      <ChannelMainChat />
     </div>
   );
 };
