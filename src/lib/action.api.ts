@@ -233,3 +233,43 @@ export const getChannelById = async (userId: string, channelId: string) => {
     return err?.response?.data;
   }
 };
+
+export const getServerInviteLink = async (userId: string, serverId: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/server/invite/${serverId}`,
+      {
+        headers: {
+          userId: userId,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};
+
+export const joinServerByInviteLink = async (
+  userId: string,
+  inviteLink: string
+) => {
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/server/invite`,
+      { userId: userId, inviteLink: inviteLink },
+      {
+        headers: {
+          userId: userId,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};

@@ -28,6 +28,7 @@ import { CategoryType, ChannelType } from "@/types";
 import CreateNewChannelBtn from "./CreateNewChannelBtn";
 import DeleteChannelContext from "./DeleteChannelContext";
 import DeleteCategoryContext from "./DeleteCategoryContext";
+import InviteDialog from "./InviteDialog";
 
 interface PropType {
   category: CategoryType;
@@ -51,11 +52,11 @@ const ServerCategoryItem = (props: PropType) => {
   });
 
   const handleCreateInvite = (channelId: string) => {
-    console.log("Create invite", channelId);
+    // console.log("Create invite", channelId);
   };
 
   const handleEditChannel = (channelId: string) => {
-    console.log("Edit channel", channelId);
+    // console.log("Edit channel", channelId);
   };
 
   useEffect(() => {
@@ -143,38 +144,43 @@ const ServerCategoryItem = (props: PropType) => {
                     </div>
                   )}
                   <div className="flex items-center gap-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => {
-                              if (channel?.id) handleCreateInvite(channel?.id);
-                            }}
-                          >
-                            <IoPersonAddSharp size={15} />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Create Invite</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => {
-                              if (channel?.id) handleEditChannel(channel?.id);
-                            }}
-                          >
-                            <IoSettingsOutline size={15} />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Edit channel</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <InviteDialog server={server} channel={channel}>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                if (channel?.id)
+                                  handleCreateInvite(channel?.id);
+                              }}
+                            >
+                              <IoPersonAddSharp size={15} />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Create Invite</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </InviteDialog>
+                    {server && server?.owner?.id === session?.user?.id && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                if (channel?.id) handleEditChannel(channel?.id);
+                              }}
+                            >
+                              <IoSettingsOutline size={15} />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit channel</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
                   </div>
                 </div>
               </DeleteChannelContext>

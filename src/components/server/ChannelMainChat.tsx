@@ -235,16 +235,19 @@ const ChannelMainChat = () => {
           chats: ChannelMessageChatType;
         }) => {
           // console.log("Receive channel message request:", rs);
+
+          const serverId = params?.["id"];
+          const channelId = params?.["channel-id"];
+          // const serverId = server?.id;
+          // const channelId = channel?.id;
+
           if (
             rs?.message === "You have new channel message" &&
             rs?.chats &&
-            rs?.user
+            rs?.user &&
+            serverId &&
+            channelId
           ) {
-            const serverId = params?.id;
-            const channelId = params?.["channel-id"];
-            // const serverId = server?.id;
-            // const channelId = channel?.id;
-
             socket.emit(
               "get_all_channel_chats",
               {
@@ -295,8 +298,7 @@ const ChannelMainChat = () => {
         (res: {
           message: string;
           user: UserType;
-          friend: UserType;
-          chat: DirectMessageChatType;
+          chat: ChannelMessageChatType;
         }) => {
           if (res?.message === "Send channel message successfully") {
             const newChat = { ...res?.chat, user: res?.user };
@@ -395,7 +397,7 @@ const ChannelMainChat = () => {
       // Create new image chat
       if (socket && session?.user?.id && serverId !== "" && channelId !== "") {
         socket.emit(
-          "send_direct_message",
+          "send_channel_message",
           {
             userId: session?.user?.id,
             serverId: serverId,
@@ -406,10 +408,13 @@ const ChannelMainChat = () => {
           (res: {
             message: string;
             user: UserType;
-            friend: UserType;
-            chat: DirectMessageChatType;
+            chat: ChannelMessageChatType;
           }) => {
-            console.log("Check send channel message:", res);
+            // console.log("Check send channel message:", res);
+            if (res?.message === "Send channel message successfully") {
+              const newChat = { ...res?.chat, user: res?.user };
+              setChannelChats(newChat);
+            }
           }
         );
       }
@@ -432,7 +437,7 @@ const ChannelMainChat = () => {
       // Create new image chat
       if (socket && session?.user?.id && serverId !== "" && channelId !== "") {
         socket.emit(
-          "send_direct_message",
+          "send_channel_message",
           {
             userId: session?.user?.id,
             serverId: serverId,
@@ -447,7 +452,11 @@ const ChannelMainChat = () => {
             friend: UserType;
             chat: DirectMessageChatType;
           }) => {
-            console.log("Check send direct message:", res);
+            // console.log("Check send direct message:", res);
+            if (res?.message === "Send channel message successfully") {
+              const newChat = { ...res?.chat, user: res?.user };
+              setChannelChats(newChat);
+            }
           }
         );
       }

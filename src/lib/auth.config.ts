@@ -47,6 +47,7 @@ export const authConfig = {
       const isOnDashboardPage = request.nextUrl?.href.includes("/dashboard");
       const isOnLoginPage = request.nextUrl?.href.includes("/login");
       const isOnRegisterPage = request.nextUrl?.href.includes("/register");
+      const isOnInviteLinkPage = request.nextUrl?.href.includes("/discord.gg");
 
       // Public page
       if (isOnHomepage) return true;
@@ -66,6 +67,10 @@ export const authConfig = {
 
       // Unauth user
       if (!user && isOnDashboardPage) {
+        return Response.redirect(new URL("/login", request.nextUrl));
+      }
+
+      if (!user && isOnInviteLinkPage) {
         return Response.redirect(new URL("/login", request.nextUrl));
       }
 
