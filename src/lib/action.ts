@@ -3,6 +3,8 @@
 import { auth, signIn, signOut } from "@/lib/auth";
 import { createNewUser, getUserByEmail } from "./action.api";
 import { UserType } from "@/types";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export const handleRegister = async (prevState: any, form: FormData) => {
   try {
@@ -62,4 +64,9 @@ export const getUserSession = async () => {
 
 export const handleSignOut = async () => {
   await signOut();
+};
+
+export const handleLeaveServerAction = async () => {
+  revalidatePath("/dashboard/friends");
+  redirect("/dashboard/friends");
 };

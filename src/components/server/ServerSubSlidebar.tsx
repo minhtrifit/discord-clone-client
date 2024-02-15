@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 
 import { RiCalendarEventLine } from "react-icons/ri";
+import { IoIosLogOut } from "react-icons/io";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import UserProfile from "../UserProfile";
@@ -18,6 +19,7 @@ import { CategoryType, ChannelType } from "@/types";
 
 // import { CategoriesData } from "@/lib/utils";
 import { getDetailServerById } from "@/lib/action.api";
+import { handleLeaveServerAction } from "@/lib/action";
 
 const ServerSubSlidebar = () => {
   const { data: session }: any = useSession();
@@ -218,6 +220,25 @@ const ServerSubSlidebar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
+  const handleLeaveServer = async () => {
+    if (socket && server?.id && session?.user?.id) {
+      if (confirm(`Do you want to leave server ${server?.name}`) == true) {
+        socket.emit(
+          "leave_server",
+          {
+            userId: session?.user?.id,
+            serverId: server?.id,
+          },
+          (res: { message: string }) => {
+            if (res?.message === "Leave server successfully") {
+              handleLeaveServerAction();
+            }
+          }
+        );
+      }
+    }
+  };
+
   return (
     <div className="relative w-[240px] overflow-x-auto bg-secondary-white dark:bg-primary-gray dark:text-gray-400">
       <div className="px-6 py-3 flex items-center justify-between gap-3 border border-b-primary-black">
@@ -251,6 +272,22 @@ const ServerSubSlidebar = () => {
       {server && server?.owner?.id === session?.user?.id && (
         <>
           <CreateNewCategoryBtn />
+          <div className="w-[95%] h-[1px] mx-auto bg-zinc-600 dark:bg-zinc-500"></div>
+        </>
+      )}
+      {server && server?.owner?.id !== session?.user?.id && (
+        <>
+          <div className="p-2">
+            <button
+              className="w-[100%] flex items-center gap-3 rounded-md p-2 text-zinc-500 hover:bg-zinc-300 hover:text-primary-black
+                            dark:text-gray-400 dark:hover:bg-zinc-700 dark:hover:text-white"
+              onClick={handleLeaveServer}
+            >
+              <IoIosLogOut size={20} />
+
+              <p className="text-[13px] font-semibold">Leave Server</p>
+            </button>
+          </div>
           <div className="w-[95%] h-[1px] mx-auto bg-zinc-600 dark:bg-zinc-500"></div>
         </>
       )}
