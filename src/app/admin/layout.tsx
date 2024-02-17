@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import Slidebar from "@/components/Slidebar";
+import ScreenProvider from "@/components/providers/ScreenProvider";
+import AdminSlidebar from "@/components/admin/AdminSlidebar";
 
 export const metadata: Metadata = {
   title: "Discord Clone | Admin",
@@ -10,5 +13,12 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="flex">{children}</div>;
+  return (
+    <ScreenProvider>
+      <div className="w-[100%] flex dark:bg-secondary-gray flex h-screen max-h-screen">
+        <AdminSlidebar />
+        {children}
+      </div>
+    </ScreenProvider>
+  );
 }
