@@ -18,6 +18,7 @@ const RegisterForm = () => {
     email: "",
     name: "",
     password: "",
+    adminCode: "",
   });
   const router = useRouter();
 
@@ -70,6 +71,20 @@ const RegisterForm = () => {
           value={formData.password}
           onChange={(e) =>
             setFormData({ ...formData, password: e.target.value })
+          }
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-[12px] font-black text-gray-400">
+          ADMIN CODE (OPTIONAL)
+        </p>
+        <input
+          className="w-auto md:w-[450px] outline-none p-2 bg-primary-black text-white rounded-md"
+          name="adminCode"
+          type="password"
+          value={formData.adminCode}
+          onChange={(e) =>
+            setFormData({ ...formData, adminCode: e.target.value })
           }
         />
       </div>

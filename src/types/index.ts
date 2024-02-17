@@ -14,6 +14,7 @@ export interface UserType {
   avatar?: string | null;
   provider?: string;
   created?: Date | string;
+  isAdmin?: boolean;
 }
 
 export interface DirectMessageChatType {

@@ -8,7 +8,8 @@ import { redirect } from "next/navigation";
 
 export const handleRegister = async (prevState: any, form: FormData) => {
   try {
-    const { email, name, password, agree }: any = Object.fromEntries(form);
+    const { email, name, password, adminCode, agree }: any =
+      Object.fromEntries(form);
 
     if (agree === undefined) return { error: "Please agree terms & policy" };
 
@@ -17,12 +18,16 @@ export const handleRegister = async (prevState: any, form: FormData) => {
 
     if (user !== null) return { error: "Email is already exist" };
 
+    if (adminCode !== "" && adminCode !== process.env.NEXT_ADMIN_CODE)
+      return { error: "Admin code incorrect" };
+
     const newUser: UserType = {
       name: name,
       email: email,
       password: password,
       avatar: null,
       provider: "email",
+      isAdmin: adminCode === process.env.NEXT_ADMIN_CODE ? true : false,
     };
 
     const res2 = await createNewUser(newUser);

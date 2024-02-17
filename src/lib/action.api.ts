@@ -36,6 +36,7 @@ export const createNewUser = async (user: UserType) => {
         password: user.password,
         avatar: user.avatar,
         provider: user.provider,
+        isAdmin: user.isAdmin,
       }
     );
     return res.data;
