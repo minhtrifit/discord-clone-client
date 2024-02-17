@@ -8,6 +8,8 @@ import { MdDashboard } from "react-icons/md";
 import { FaDatabase } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
 
+import { ThemeToggle } from "../ThemeToggle";
+
 import { handleSignOut } from "@/lib/action";
 
 const AdminSlidebar = () => {
@@ -26,6 +28,9 @@ const AdminSlidebar = () => {
         <p className="text-[25px] font-bold text-primary-purple">
           Discord Admin
         </p>
+      </div>
+      <div className="my-5 px-6 flex gap-3">
+        <ThemeToggle />
       </div>
       <div className="my-10 px-2 max-h-[calc(100vh-200px)] h-[calc(100vh-200px)] overflow-y-auto">
         <div className="flex flex-col gap-2">
