@@ -298,3 +298,27 @@ export const adminGetAllServers = async () => {
     return err?.response?.data;
   }
 };
+
+export const adminGetServersAnalysis = async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/servers/analysis`
+    );
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};
+
+export const adminGetAllChats = async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/chats`
+    );
+    return res.data;
+  } catch (err: any) {
+    console.log("API CALL ERROR:", err?.response?.data);
+    return err?.response?.data;
+  }
+};

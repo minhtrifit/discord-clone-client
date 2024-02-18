@@ -4,6 +4,12 @@ export interface ServerType {
   owner?: UserType; // userId
   avatar?: string | null;
   created?: string;
+  members?: UserType[];
+  categories?: CategoryType[];
+  channels?: ChannelType[];
+  totalMembers?: number;
+  totalCategories?: number;
+  totalChannels?: number;
 }
 
 export interface UserType {

@@ -4,18 +4,28 @@ import { FaUser, FaServer } from "react-icons/fa";
 import { PiChatsCircleFill } from "react-icons/pi";
 import { MdAdminPanelSettings } from "react-icons/md";
 
-import { adminGetAllServers, adminGetAllUsers } from "@/lib/action.api";
+import {
+  adminGetAllChats,
+  adminGetAllServers,
+  adminGetAllUsers,
+  adminGetServersAnalysis,
+} from "@/lib/action.api";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
 import AdminServersTable from "@/components/admin/AdminServersTable";
+import AdminServerAnalysis from "@/components/admin/AdminServersAnalysis";
 
 const AdminPage = async () => {
   const adminUsersRes = await adminGetAllUsers();
   const adminServerRes = await adminGetAllServers();
+  const adminServerAnalysisRes = await adminGetServersAnalysis();
+  const adminChatsRes = await adminGetAllChats();
 
   const users = adminUsersRes?.users;
   const totalUsers = adminUsersRes?.total;
   const servers = adminServerRes?.servers;
   const totalServers = adminServerRes?.total;
+  const serversAnalysis = adminServerAnalysisRes?.servers;
+  const totalChats = adminChatsRes?.total;
 
   return (
     <div className="w-[calc(100vw-260px)] overflow-y-auto">
@@ -50,7 +60,7 @@ const AdminPage = async () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <p className="text-[20px]">50</p>
+                <p className="text-[20px]">{totalChats}</p>
                 <PiChatsCircleFill size={30} />
               </div>
             </CardContent>
@@ -59,6 +69,7 @@ const AdminPage = async () => {
       </header>
       <AdminUsersTable users={users} />
       <AdminServersTable servers={servers} />
+      <AdminServerAnalysis servers={serversAnalysis} />
     </div>
   );
 };
