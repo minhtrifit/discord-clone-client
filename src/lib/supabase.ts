@@ -99,3 +99,18 @@ export const getPublicUrl = async (
 
   return data.publicUrl;
 };
+
+export const listAllFiles = async (bucket: string, folderName: string) => {
+  const { data, error } = await supabase.storage.from(bucket).list(folderName, {
+    limit: 100,
+    offset: 0,
+    sortBy: { column: "name", order: "asc" },
+  });
+
+  if (error) {
+    console.error("Error download files:", error.message);
+    return { data, status: false };
+  } else {
+    return { data, status: true };
+  }
+};

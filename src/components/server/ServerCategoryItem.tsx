@@ -133,15 +133,19 @@ const ServerCategoryItem = (props: PropType) => {
                     </Link>
                   )}
                   {channel?.type === "voice" && (
-                    <div className="text-[13px] flex items-center gap-3">
-                      <HiSpeakerWave
-                        className="flex items-center justify-center text-[23px] w-[30px]"
-                        size={20}
-                      />
-                      <p className="max-w-[120px] truncate hover:underline">
-                        {channel?.name}
-                      </p>
-                    </div>
+                    <Link
+                      href={`/dashboard/server/${serverId}/voice-channel/${channel?.id}`}
+                    >
+                      <div className="text-[13px] flex items-center gap-3">
+                        <HiSpeakerWave
+                          className="flex items-center justify-center text-[23px] w-[30px]"
+                          size={20}
+                        />
+                        <p className="max-w-[120px] truncate hover:underline">
+                          {channel?.name}
+                        </p>
+                      </div>
+                    </Link>
                   )}
                   <div className="flex items-center gap-2">
                     <InviteDialog server={server} channel={channel}>
