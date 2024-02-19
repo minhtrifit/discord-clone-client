@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DISCORD CLONE CLIENT DOCUMENTATION
 
-## Getting Started
+<img src="https://img.shields.io/github/stars/minhtrifit/discord-clone-client"/> ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/minhtrifit/discord-clone-client)
 
-First, run the development server:
+![Thumbnail](./showcase/screenshot.png)
+
+🎓 📚 Realtime chat & video call app inspired from [Discord](https://discord.com)
+
+This project includes two repository (Client and Server), you can checkout **[server repository](https://github.com/minhtrifit/discord-clone-server)**
+
+## 💻 Technical Stack
+
+<p align="left"> <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> <a href="https://tailwindcss.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="tailwind" width="40" height="40"/> </a> <a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/> </a> </p>
+
+- [Next.js14](https://nextjs.org) - The React Framework for the Web
+- [React.js](https://react.dev) - The library for web and native user interfaces
+- [Shadcn UI](https://ui.shadcn.com) - Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.
+- [Tailwind CSS](https://tailwindcss.com) - Rapidly build modern websites without ever leaving your HTML
+- [TypeScript](https://www.typescriptlang.org) - JavaScript with syntax for types.
+
+## ⚙️ Config .env file
+
+Config [.env]() file in root dir with path `./.env`
+
+- [Supabase setup](https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs)
+- [Github Oauth setup](hhttps://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXTAUTH_URL=
+NEXTAUTH_SECRET=
+GITHUB_ID=
+GITHUB_SECRET=
+NEXT_PUBLIC_API_URL=
+NEXT_ADMIN_CODE=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_HOST=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📦 Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Intall packages & dependencies
+```console
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Or install packages with legacy peer dependencies.
+```console
+npm install --legacy-peer-deps
+```
 
-## Learn More
+Run client project (supported by [Create Next App](https://nextjs.org/docs/getting-started/installation))
+```console
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+# ⚡️ Project Showcase
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Landing Page:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+![Landing](./showcase/landing.png)
 
-## Deploy on Vercel
+Login Page:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* Email & password login
+* Oauth with Github login
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+![Login](./showcase/login.png)
+
+Register Page:
+
+* Admin passcode for register admin account
+
+![Login](./showcase/register.png)
+
+Dashboard:
+
+* Realtime friend request (all friend, add friend, pending friend)
+* Realtime direct message
+
+![Dashboard](./showcase/dashboard.png)
+
+Chat Page:
+
+* Realtime text chat
+* Realtime file chat (image, pdf, docx, xlsx)
+
+![Chat](./showcase/chat1.png)
+
+![Chat](./showcase/chat2.png)
+
+Server page:
+
+* Group realtime chat
+* Joining server by invite link
+
+![Server](./showcase/server1.png)
+
+![Server](./showcase/server2.png)
+
+Admin page:
+
+* View users analysis
+* View servers analysis
+* View storage charts
+
+![Admin](./showcase/admin1.png)
+
+![Admin](./showcase/admin2.png)
+
+## ▶️ YouTube Demo
+
+[![Thumnail](./showcase/screenshot.png)](https://youtu.be/L8ixcX2tIdk)
+
+## 💌 Contact
+
+- Author - [minhtrifit](https://minhtrifitdev.netlify.app)
+- [Github](https://github.com/minhtrifit)
+
+> CopyRight© minhtrifit
