@@ -76,13 +76,13 @@ const ImageChat = (props: PropType) => {
                 {chat?.sended ? formatDateStr(chat?.sended) : "undefined"}
               </p>
             </div>
-            {user?.avatar === null && (
+            {/* {user?.avatar === null && (
               <Avatar className="w-[40px] h-[40px]">
                 <AvatarFallback>
                   {user?.name && getSummaryName(user?.name)}
                 </AvatarFallback>
               </Avatar>
-            )}
+            )} */}
           </div>
           {chat?.url && (
             <div className="flex gap-3 items-end">
