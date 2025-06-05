@@ -22,34 +22,63 @@ This project includes two repository (Client and Server), you can checkout **[se
 
 Config [.env]() file in root dir with path `./.env`
 
-- [Supabase setup](https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs)
 - [Github Oauth setup](hhttps://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)
 
 ```bash
-NEXTAUTH_URL=
-NEXTAUTH_SECRET=
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=minhtrifit
 GITHUB_ID=
 GITHUB_SECRET=
-NEXT_PUBLIC_API_URL=
-NEXT_ADMIN_CODE=
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_HOST=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_ADMIN_CODE=admin
+NEXT_PUBLIC_SUPABASE_URL=https://your_project_id.supabase.co
+NEXT_PUBLIC_SUPABASE_HOST=your_project_id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_project_key
 ```
+
+- [Supabase setup](https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs)
+
+- To get **Supabase** config
+  Go to **Project Settings** > General to get **your_project_id**
+
+![supabase setup](./showcase/supabase_anon.png)
+
+- Now move on **API Keys** > General to get **ANON_KEY**
+
+![supabase setup](./showcase/supabase_key.png)
+
+## ⚙️ Config Supabase project
+
+For using upload file feature, you need to enable **storage** service
+
+![supabase setup](./showcase/supabase1.png)
+
+![supabase setup](./showcase/supabase2.png)
+
+![supabase setup](./showcase/supabase3.png)
+
+![supabase setup](./showcase/supabase4.png)
+
+![supabase setup](./showcase/supabase5.png)
+
+![supabase setup](./showcase/supabase6.png)
 
 ## 📦 Installation
 
 Intall packages & dependencies
+
 ```console
 npm install
 ```
 
 Or install packages with legacy peer dependencies.
+
 ```console
 npm install --legacy-peer-deps
 ```
 
 Run client project (supported by [Create Next App](https://nextjs.org/docs/getting-started/installation))
+
 ```console
 npm run dev
 ```
@@ -62,28 +91,28 @@ Landing Page:
 
 Login Page:
 
-* Email & password login
-* Oauth with Github login
+- Email & password login
+- Oauth with Github login
 
 ![Login](./showcase/login.png)
 
 Register Page:
 
-* Admin passcode for register admin account
+- Admin passcode for register admin account
 
 ![Login](./showcase/register.png)
 
 Dashboard:
 
-* Realtime friend request (all friend, add friend, pending friend)
-* Realtime direct message
+- Realtime friend request (all friend, add friend, pending friend)
+- Realtime direct message
 
 ![Dashboard](./showcase/dashboard.png)
 
 Chat Page:
 
-* Realtime text chat
-* Realtime file chat (image, pdf, docx, xlsx)
+- Realtime text chat
+- Realtime file chat (image, pdf, docx, xlsx)
 
 ![Chat](./showcase/chat1.png)
 
@@ -91,8 +120,8 @@ Chat Page:
 
 Server page:
 
-* Group realtime chat
-* Joining server by invite link
+- Group realtime chat
+- Joining server by invite link
 
 ![Server](./showcase/server1.png)
 
@@ -100,9 +129,9 @@ Server page:
 
 Admin page:
 
-* View users analysis
-* View servers analysis
-* View storage charts
+- View users analysis
+- View servers analysis
+- View storage charts
 
 ![Admin](./showcase/admin1.png)
 
